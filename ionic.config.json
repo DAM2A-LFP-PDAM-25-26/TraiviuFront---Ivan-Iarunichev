@@ -1,0 +1,7 @@
+{
+  "name": "traiviu",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
