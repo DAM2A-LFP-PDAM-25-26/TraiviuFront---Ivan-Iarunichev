@@ -3,29 +3,31 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'tabs',
     component: TabsPage,
     children: [
       {
         path: 'catalog',
-        loadComponent: () =>
-          import('./catalog/catalog.page').then(m => m.CatalogPage),
+        loadComponent: () => import('../tabs/catalog/catalog.page').then((m) => m.CatalogPage),
       },
       {
         path: 'lists',
-        loadComponent: () =>
-          import('./lists/lists.page').then(m => m.ListsPage),
+        loadComponent: () => import('../tabs/lists/lists.page').then((m) => m.ListsPage),
       },
       {
         path: 'clans',
-        loadComponent: () =>
-          import('./clans/clans.page').then(m => m.ClansPage),
+        loadComponent: () => import('../tabs/clans/clans.page').then((m) => m.ClansPage),
       },
       {
         path: '',
-        redirectTo: 'catalog',
+        redirectTo: '/tabs/catalog',
         pathMatch: 'full',
       },
     ],
-  }
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/catalog',
+    pathMatch: 'full',
+  },
 ];

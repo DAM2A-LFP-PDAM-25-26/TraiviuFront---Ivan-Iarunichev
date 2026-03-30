@@ -14,6 +14,7 @@ export interface TraiviuList {
 @Injectable({
   providedIn: 'root',
 })
+
 export class ListsService {
   // Ajusta esta URL según dónde corras el backend
   private apiUrl = 'http://localhost:8085/api';

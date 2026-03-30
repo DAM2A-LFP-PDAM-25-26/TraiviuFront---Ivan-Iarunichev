@@ -1,13 +1,55 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>lists</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/catalog" icon="chevron-back-outline"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>
+      <div class="brand-container">
+        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+        <span class="brand-text">raiviu</span>
+      </div>
+    </ion-title>
+
+    <ion-buttons slot="end" style="width: 48px;"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">lists</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="main-container">
+
+    <!-- Botón Crear Nueva Lista -->
+    <div class="create-list-container">
+      <ion-button expand="block" class="create-btn" fill="solid">
+        + Crear nueva lista
+      </ion-button>
+    </div>
+
+    <!-- Título de sección -->
+    <h3 class="section-title">Listas recientes</h3>
+    <div class="title-divider"></div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="ion-text-center loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando...</p>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!isLoading && lists.length === 0" class="empty-state">
+      <p>Aún no tienes listas creadas.</p>
+    </div>
+
+    <!-- Lista de elementos -->
+    <div class="lists-wrapper" *ngIf="!isLoading && lists.length > 0">
+      <div class="custom-list-item" *ngFor="let list of lists">
+        <ion-icon name="folder-outline" class="folder-icon"></ion-icon>
+        <span class="list-name">{{ list.name }}</span>
+        <ion-button fill="clear" class="options-btn">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+  </div>
 </ion-content>

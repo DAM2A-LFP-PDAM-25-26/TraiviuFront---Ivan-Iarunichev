@@ -1,18 +1,21 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="clans" [routerLink]="['/clans']">
-      <ion-icon name="people"></ion-icon>
-      <ion-label>Clans</ion-label>
+  <!-- Añadimos la clase custom-tab-bar -->
+  <ion-tab-bar slot="bottom" class="custom-tab-bar ion-no-border">
+
+    <ion-tab-button tab="catalog">
+      <ion-icon src="assets/icon/catalog.svg"></ion-icon>
+      <ion-label>Inicio</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="catalog" [routerLink]="['/catalog']">
-      <ion-icon name="film"></ion-icon>
-      <ion-label>Catalog</ion-label>
+    <ion-tab-button tab="lists">
+      <ion-icon src="assets/icon/lists.svg"></ion-icon>
+      <ion-label>Listas</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="lists" [routerLink]="['/lists']">
-      <ion-icon name="list"></ion-icon>
-      <ion-label>Lists</ion-label>
+    <ion-tab-button tab="clans">
+      <ion-icon src="assets/icon/clans.svg"></ion-icon>
+      <ion-label>Clanes</ion-label>
     </ion-tab-button>
+
   </ion-tab-bar>
 </ion-tabs>

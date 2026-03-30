@@ -1,0 +1,136 @@
+$bg-main: #2C2C2C;
+$bg-card: #1E3A2F;
+$accent-color: #34A873;
+$text-main: #F3F4F4;
+$text-muted: #A3A3A3;
+
+ion-content {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+}
+
+ion-toolbar {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+  --border-width: 0;
+
+  ion-title {
+    padding: 0;
+  }
+}
+
+.brand-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0px;
+  margin-top: 15px;
+}
+
+.brand-logo-t {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0px;
+  transform: translateY(4px);
+}
+
+.brand-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F3F4F4;
+  letter-spacing: 0px;
+}
+
+.main-container {
+  padding: 20px;
+}
+
+.create-list-container {
+  margin-bottom: 35px;
+
+  .create-btn {
+    --background: #{$bg-card};
+    --border-color: #{$accent-color};
+    --border-style: solid;
+    --border-width: 2px;
+    --border-radius: 12px;
+    --color: #{$text-main};
+    --box-shadow: 0 4px 10px rgba(97, 45, 83, 0.4);
+
+    font-weight: 600;
+    height: 52px;
+    margin: 0;
+    text-transform: none;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+
+    &.ion-activated {
+      --background: #{$accent-color};
+    }
+  }
+}
+
+.section-title {
+  color: #{$text-main};
+  font-size: 1.2rem;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+
+.title-divider {
+  display: none;
+}
+
+.lists-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-list-item {
+  display: flex;
+  align-items: center;
+  background-color: #{$bg-card};
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #{$accent-color};
+
+  .folder-icon {
+    font-size: 1.6rem;
+    color: #{$text-main};
+    margin-right: 15px;
+    background: #{$accent-color};
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .list-name {
+    flex: 1;
+    color: #{$text-main};
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+
+  .options-btn {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin: 0;
+    height: auto;
+
+    ion-icon {
+      color: #{$text-muted};
+      font-size: 1.4rem;
+    }
+  }
+}
+
+.loading-state, .empty-state {
+  color: #{$text-muted};
+  margin-top: 40px;
+
+  ion-spinner {
+    color: #{$accent-color};
+  }
+}
