@@ -1,32 +1,32 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/catalog" icon="chevron-back-outline"></ion-back-button>
-    </ion-buttons>
-
     <ion-title>
       <div class="brand-container">
         <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
         <span class="brand-text">raiviu</span>
       </div>
     </ion-title>
-
-    <ion-buttons slot="end" style="width: 48px;"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="main-container">
 
+    <!-- Título principal de la pantalla -->
+    <div class="page-header">
+      <h1 class="page-title">Mis Listas</h1>
+    </div>
+
     <!-- Botón Crear Nueva Lista -->
     <div class="create-list-container">
-      <ion-button expand="block" class="create-btn" fill="solid">
+      <ion-button expand="block" class="create-btn" fill="solid" (click)="presentCreateListAlert()">
         + Crear nueva lista
       </ion-button>
     </div>
 
     <!-- Título de sección -->
     <h3 class="section-title">Listas recientes</h3>
+    <hr>
     <div class="title-divider"></div>
 
     <!-- Estado de carga -->
@@ -42,12 +42,24 @@
 
     <!-- Lista de elementos -->
     <div class="lists-wrapper" *ngIf="!isLoading && lists.length > 0">
-      <div class="custom-list-item" *ngFor="let list of lists">
-        <ion-icon name="folder-outline" class="folder-icon"></ion-icon>
-        <span class="list-name">{{ list.name }}</span>
-        <ion-button fill="clear" class="options-btn">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
-        </ion-button>
+
+      <div class="custom-list-item" *ngFor="let list of lists" (click)="goToListDetails(list)">
+
+        <!-- Tu icono a la izquierda -->
+        <div class="icon-container">
+          <ion-icon src="assets/icon/folder-icon.svg" class="folder-icon"></ion-icon>
+        </div>
+
+        <!-- El nombre en el centro -->
+        <div class="list-name-container">
+          <span class="list-name">{{ list.name }}</span>
+        </div>
+
+        <!-- Los 3 puntos a la derecha -->
+        <div class="options-container" (click)="openListOptions($event, list)">
+          <ion-icon src="assets/icon/more.svg"></ion-icon>
+        </div>
+
       </div>
     </div>
 

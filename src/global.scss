@@ -39,3 +39,60 @@
 :root {
   --ion-font-family: 'Poppins', sans-serif;
 }
+
+.traiviu-custom-alert {
+  
+  --background: #2C2C2C; 
+  
+  --backdrop-opacity: 0.7;
+
+  h2.alert-title {
+    color: #F3F4F4 !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .alert-message {
+    color: #A3A3A3 !important;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  .alert-input {
+    background: #2C2C2C !important;
+    border: 1px solid #34A873 !important;
+    border-radius: 8px;
+    color: #F3F4F4 !important;
+    padding: 12px 15px !important;
+    margin-top: 15px;
+    font-family: 'Poppins', sans-serif;
+    
+    &::placeholder {
+      color: #777 !important;
+    }
+    
+    &:focus {
+      border-color: #4df0a4 !important;
+      box-shadow: 0 0 0 2px rgba(52, 168, 115, 0.2);
+    }
+  }
+
+  .alert-button-group {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .alert-cancel-btn {
+    color: #A3A3A3 !important;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .alert-create-btn {
+    color: #34A873 !important;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+  }
+}
