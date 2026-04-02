@@ -41,9 +41,9 @@
 }
 
 .traiviu-custom-alert {
-  
-  --background: #2C2C2C; 
-  
+
+  --background: #2C2C2C;
+
   --backdrop-opacity: 0.7;
 
   h2.alert-title {
@@ -65,13 +65,13 @@
     border-radius: 8px;
     color: #F3F4F4 !important;
     padding: 12px 15px !important;
-    margin-top: 15px;
+    margin-top: 0px;
     font-family: 'Poppins', sans-serif;
-    
+
     &::placeholder {
       color: #777 !important;
     }
-    
+
     &:focus {
       border-color: #4df0a4 !important;
       box-shadow: 0 0 0 2px rgba(52, 168, 115, 0.2);
@@ -80,7 +80,7 @@
 
   .alert-button-group {
     padding: 10px;
-    gap: 10px;
+    gap: 40px;
   }
 
   .alert-cancel-btn {
@@ -93,6 +93,57 @@
     color: #34A873 !important;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
+  }
+}
+
+.custom-popover {
+  --background: #2C2C2C;
+  --border-radius: 12px;
+  --box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+  --width: 200px;
+
+  .popover-content-bg {
+    --background: #2C2C2C;
+  }
+
+  .popover-list {
+    background: transparent;
+    padding: 5px 0;
+
+    ion-item {
+      --background: transparent;
+      --color: #F3F4F4;
+
+      --background-hover: #404040;
+      --background-hover-opacity: 1;
+
+      --background-focused: #404040;
+      --background-focused-opacity: 1;
+
+      --background-activated: #404040;
+      --background-activated-opacity: 1;
+
+      --min-height: 48px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+
+      &:hover {
+        --background: #404040;
+      }
+
+      .popover-icon {
+        color: #34A873;
+        font-size: 1.2rem;
+        margin-right: 0px;
+      }
+
+      .popover-icon-danger {
+        color: #ff4961;
+        font-size: 1.2rem;
+        margin-right: 0px;
+      }
+    }
   }
 }

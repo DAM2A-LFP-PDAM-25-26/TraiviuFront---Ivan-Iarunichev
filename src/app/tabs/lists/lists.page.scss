@@ -107,7 +107,7 @@ ion-toolbar {
   .action-sheet-icon {
     color: #34A873;
   }
-  
+
   .action-sheet-button.action-sheet-destructive .action-sheet-icon {
     color: #ff4961;
   }
@@ -136,45 +136,43 @@ ion-toolbar {
 
 .custom-list-item {
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between; 
-  background-color: #{$bg-card}; // Ahora sí encontrará esta variable
-  border-radius: 12px; 
-  padding: 15px 18px;
-  border: 1px solid #{$accent-color}; // Y esta también
-  
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  
-  &:active {
-    background-color: lighten(#1E3A2F, 5%);
-  }
+  background-color: #{$bg-card};
+  border-radius: 12px;
+  border: 1px solid #{$accent-color};
+  overflow: hidden;
 
-  .icon-container {
+  .list-clickable-area {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    margin-right: 15px;
+    flex: 1;
+    padding: 15px 0 15px 18px;
+    cursor: pointer;
 
-    .folder-icon {
-      font-size: 1.6rem;
-      color: #{$text-main}; 
-      background: #{$accent-color}; 
-      padding: 8px;
-      border-radius: 10px;
+    &:active {
+      background-color: rgba(255, 255, 255, 0.05);
     }
-  }
 
-  .list-name-container {
-    flex: 1; 
-    display: flex;
-    align-items: center;
-    
-    .list-name {
-      color: #{$text-main};
-      font-size: 1.05rem;
-      font-weight: 500;
+    .icon-container {
+      margin-right: 15px;
+
+      .folder-icon {
+        font-size: 1.6rem;
+        color: #{$text-main};
+        background: #{$accent-color};
+        padding: 8px;
+        border-radius: 10px;
+      }
+    }
+
+    .list-name-container {
+      .list-name {
+        color: #{$text-main};
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
     }
   }
 
@@ -182,11 +180,15 @@ ion-toolbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px; 
-    margin-right: -10px; 
-    
+    padding: 15px 18px;
+    cursor: pointer;
+
+    &:active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
     ion-icon {
-      color: #{$text-muted}; 
+      color: #{$text-muted};
       font-size: 1.6rem;
     }
   }

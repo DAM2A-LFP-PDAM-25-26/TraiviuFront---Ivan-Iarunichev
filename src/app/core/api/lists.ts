@@ -16,7 +16,6 @@ export interface TraiviuList {
 })
 
 export class ListsService {
-  // Ajusta esta URL según dónde corras el backend
   private apiUrl = 'http://localhost:8085/api';
 
   constructor(private http: HttpClient) {}
@@ -30,6 +29,16 @@ export class ListsService {
       userId,
       name,
       type,
+    });
+  }
+
+  deleteList(listId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/lists/${listId}`);
+  }
+
+  updateListName(listId: string, newName: string): Observable<TraiviuList> {
+    return this.http.put<TraiviuList>(`${this.apiUrl}/lists/${listId}`, {
+      name: newName
     });
   }
 }

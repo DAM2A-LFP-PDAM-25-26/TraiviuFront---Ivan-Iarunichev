@@ -43,22 +43,47 @@
     <!-- Lista de elementos -->
     <div class="lists-wrapper" *ngIf="!isLoading && lists.length > 0">
 
-      <div class="custom-list-item" *ngFor="let list of lists" (click)="goToListDetails(list)">
+      <div class="custom-list-item" *ngFor="let list of lists">
 
-        <!-- Tu icono a la izquierda -->
-        <div class="icon-container">
-          <ion-icon src="assets/icon/folder-icon.svg" class="folder-icon"></ion-icon>
+        <div class="list-clickable-area" (click)="goToListDetails(list)">
+          <div class="icon-container">
+            <ion-icon src="assets/icon/folder-icon.svg" class="folder-icon"></ion-icon>
+          </div>
+
+          <div class="list-name-container">
+            <span class="list-name">{{ list.name }}</span>
+          </div>
         </div>
 
-        <!-- El nombre en el centro -->
-        <div class="list-name-container">
-          <span class="list-name">{{ list.name }}</span>
-        </div>
-
-        <!-- Los 3 puntos a la derecha -->
-        <div class="options-container" (click)="openListOptions($event, list)">
+        <div class="options-container" [id]="'trigger-' + list.id" (click)="$event.stopPropagation()">
           <ion-icon src="assets/icon/more.svg"></ion-icon>
         </div>
+
+        <ion-popover [trigger]="'trigger-' + list.id" triggerAction="click" alignment="end" side="bottom"
+          dismissOnSelect="true" class="custom-popover">
+          <ng-template>
+            <ion-content class="popover-content-bg">
+              <ion-list class="popover-list">
+
+                <ion-item button (click)="goToListDetails(list)" lines="none">
+                  <ion-icon name="folder-open-outline" slot="start" class="popover-icon"></ion-icon>
+                  <ion-label>Ver contenido</ion-label>
+                </ion-item>
+
+                <ion-item button (click)="presentEditListAlert(list)" lines="none">
+                  <ion-icon name="pencil-outline" slot="start" class="popover-icon"></ion-icon>
+                  <ion-label>Renombrar</ion-label>
+                </ion-item>
+
+                <ion-item button (click)="deleteList(list)" lines="none" class="delete-item">
+                  <ion-icon name="trash-outline" slot="start" class="popover-icon-danger"></ion-icon>
+                  <ion-label color="danger">Eliminar</ion-label>
+                </ion-item>
+
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
 
       </div>
     </div>
