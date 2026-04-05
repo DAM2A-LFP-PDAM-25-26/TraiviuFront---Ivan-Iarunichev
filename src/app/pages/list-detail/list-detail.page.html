@@ -1,13 +1,68 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>list-detail</ion-title>
+    <ion-title>
+      <div class="brand-container">
+        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+        <span class="brand-text">raiviu</span>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">list-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="main-container">
+
+    <!-- Título principal de la pantalla -->
+    <div class="page-header">
+      <h1 class="page-title">{{ this.nombreLista }}</h1>
+    </div>
+
+    <!-- Buscador estilo Traiviu -->
+    <div class="search-container">
+      <ion-searchbar class="custom-searchbar" placeholder="Buscar en la lista..." mode="ios"></ion-searchbar>
+    </div>
+
+    <!-- Título de sección -->
+    <h3 class="section-title">Añadidas recientemente</h3>
+    <div class="title-divider"></div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="peliculas.length === 0" class="empty-state">
+      <p>Aún no tienes películas o series guardadas.</p>
+    </div>
+
+    <!-- Lista de películas -->
+    <div class="movies-wrapper" *ngIf="peliculas.length > 0">
+
+      <!-- Cada tarjeta de película -->
+      <div class="custom-movie-item" *ngFor="let peli of peliculas">
+
+        <!-- Contenedor clicable (para ir a ver detalles de la peli en el futuro) -->
+        <div class="movie-clickable-area">
+          <div class="poster-container">
+            <img [src]="peli.posterUrl" alt="Poster" class="movie-poster" />
+          </div>
+
+          <div class="movie-info-container">
+            <span class="movie-title">{{ peli.title }}</span>
+            <span class="movie-year">({{ peli.year }})</span>
+          </div>
+        </div>
+
+        <!-- Botón de eliminar (El [-] de tu boceto) -->
+        <div class="options-container" (click)="borrarPelicula(peli.id)">
+          <ion-icon name="trash-outline" class="delete-icon"></ion-icon>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Botón Añadir Película (Botón grande abajo del boceto) -->
+    <div class="add-movie-container">
+      <ion-button expand="block" class="create-btn" fill="solid" routerLink="/search-movies">
+        + Añadir película/serie
+      </ion-button>
+    </div>
+
+  </div>
 </ion-content>
