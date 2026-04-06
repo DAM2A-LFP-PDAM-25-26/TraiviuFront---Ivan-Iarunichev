@@ -21,7 +21,7 @@ ion-toolbar {
 }
 
 .page-header {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .page-title {
@@ -41,32 +41,122 @@ ion-toolbar {
   margin-top: 15px;
 }
 
+.brand-logo-t {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0px;
+  transform: translateY(4px);
+}
+
 .brand-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #{$text-main};
+  color: #F3F4F4;
+  letter-spacing: 0px;
 }
 
 .main-container {
   padding: 20px;
-  padding-bottom: 80px; /* Espacio extra por si la lista es larga */
+  padding-bottom: 80px;
 }
 
-/* Buscador personalizado */
 .search-container {
-  margin-bottom: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 25px;
+}
 
-  .custom-searchbar {
-    --background: #{$bg-card};
-    --color: #{$text-main};
-    --placeholder-color: #{$text-muted};
-    --icon-color: #{$accent-color};
-    --border-radius: 12px;
-    --box-shadow: none;
-    border: 1px solid #{$accent-color};
-    padding: 0;
-  }
+.custom-searchbar {
+  --background: transparent;
+  --color: #{$text-main};
+  --placeholder-color: #{$text-muted};
+  --icon-color: #{$accent-color};
+  --box-shadow: none;
+  --border-radius: 12px;
+  padding: 0;
+  width: 100%;
+  max-width: 420px;
+}
+
+.custom-searchbar::part(container) {
+  background: $bg-card;
+  border: 1px solid rgba($accent-color, 0.9);
+  border-radius: 12px;
+  padding-inline: 8px;
+  min-height: 52px;
+}
+
+.custom-searchbar::part(input) {
+  color: $text-main;
+  font-size: 1rem;
+}
+
+.list-title-row {
+  display: flex;
+  margin: 24px 0 8px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.filter-label {
+  color: $text-main;
+  font-size: 1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.filter-select {
+  --background: #{$bg-card};
+  --color: #{$text-main};
+  --placeholder-color: #{$text-muted};
+  --padding-start: 12px;
+  --padding-end: 10px;
+  --border-radius: 10px;
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+
+  min-width: 145px;
+  max-width: 170px;
+  border: 1px solid rgba($accent-color, 0.9);
+  border-radius: 10px;
+  background: $bg-card;
+  color: $text-main;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.filter-select::part(icon) {
+  color: $accent-color;
+  opacity: 1;
+}
+
+.filter-select::part(text) {
+  color: $text-main;
+}
+
+.custom-back-btn {
+  background: transparent;
+  border: none;
+  padding: 0 0 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-back-btn img {
+  width: 22px;
+  height: 22px;
 }
 
 .section-title {
@@ -98,7 +188,6 @@ ion-toolbar {
   margin-bottom: 30px;
 }
 
-/* Tarjetas de Películas */
 .custom-movie-item {
   display: flex;
   flex-direction: row;
@@ -155,20 +244,19 @@ ion-toolbar {
     justify-content: center;
     padding: 15px 18px;
     cursor: pointer;
-    border-left: 1px solid rgba(52, 168, 115, 0.3); /* Línea divisoria suave */
+    border-left: 1px solid rgba(52, 168, 115, 0.3);
 
     &:active {
       background-color: rgba(255, 73, 97, 0.1);
     }
 
     .delete-icon {
-      color: #{$danger-color}; /* Rojo para borrar */
+      color: #{$danger-color};
       font-size: 1.6rem;
     }
   }
 }
 
-/* Botón Añadir abajo del todo (igual que el tuyo) */
 .add-movie-container {
   margin-top: 15px;
 
@@ -179,7 +267,6 @@ ion-toolbar {
     --border-width: 2px;
     --border-radius: 12px;
     --color: #{$text-main};
-    --box-shadow: 0 4px 10px rgba(52, 168, 115, 0.2);
 
     font-weight: 600;
     height: 52px;

@@ -12,32 +12,44 @@
 <ion-content>
   <div class="main-container">
 
-    <!-- Título principal de la pantalla -->
-    <div class="page-header">
-      <h1 class="page-title">{{ this.nombreLista }}</h1>
+    <div class="list-title-row">
+      <ion-buttons slot="start">
+        <button class="custom-back-btn" (click)="goBack()">
+          <img src="assets/icon/arrow-back.svg" alt="Atrás">
+        </button>
+      </ion-buttons>
+      <div class="page-header">
+        <h1 class="page-title">{{ nombreLista }}</h1>
+      </div>
     </div>
 
-    <!-- Buscador estilo Traiviu -->
+    <div class="filter-row">
+      <span class="filter-label">Filtro:</span>
+
+      <ion-select class="filter-select" interface="popover" placeholder="Selecciona" [(ngModel)]="filtroPeriodo">
+        <ion-select-option value="todos">Todos</ion-select-option>
+        <ion-select-option value="semana">Esta semana</ion-select-option>
+        <ion-select-option value="mes">Este mes</ion-select-option>
+        <ion-select-option value="mesAnterior">Mes anterior</ion-select-option>
+        <ion-select-option value="anio">Este año</ion-select-option>
+        <ion-select-option value="anioAnterior">Año anterior</ion-select-option>
+      </ion-select>
+    </div>
+
     <div class="search-container">
-      <ion-searchbar class="custom-searchbar" placeholder="Buscar en la lista..." mode="ios"></ion-searchbar>
+      <ion-searchbar class="custom-searchbar" placeholder="Buscar en la lista..." mode="ios">
+      </ion-searchbar>
     </div>
 
-    <!-- Título de sección -->
     <h3 class="section-title">Añadidas recientemente</h3>
     <div class="title-divider"></div>
 
-    <!-- Estado vacío -->
     <div *ngIf="peliculas.length === 0" class="empty-state">
       <p>Aún no tienes películas o series guardadas.</p>
     </div>
 
-    <!-- Lista de películas -->
     <div class="movies-wrapper" *ngIf="peliculas.length > 0">
-
-      <!-- Cada tarjeta de película -->
       <div class="custom-movie-item" *ngFor="let peli of peliculas">
-
-        <!-- Contenedor clicable (para ir a ver detalles de la peli en el futuro) -->
         <div class="movie-clickable-area">
           <div class="poster-container">
             <img [src]="peli.posterUrl" alt="Poster" class="movie-poster" />
@@ -49,15 +61,12 @@
           </div>
         </div>
 
-        <!-- Botón de eliminar (El [-] de tu boceto) -->
         <div class="options-container" (click)="borrarPelicula(peli.id)">
           <ion-icon name="trash-outline" class="delete-icon"></ion-icon>
         </div>
-
       </div>
     </div>
 
-    <!-- Botón Añadir Película (Botón grande abajo del boceto) -->
     <div class="add-movie-container">
       <ion-button expand="block" class="create-btn" fill="solid" routerLink="/search-movies">
         + Añadir película/serie
