@@ -15,12 +15,16 @@ export const routes: Routes = [
         loadComponent: () => import('../tabs/lists/lists.page').then((m) => m.ListsPage),
       },
       {
-        path: 'lists/:id', // El ':id' es dinámico y lo capturaremos luego
+        path: 'lists/:id',
         loadComponent: () => import('../pages/list-detail/list-detail.page').then(m => m.ListDetailPage),
       },
       {
         path: 'clans',
         loadComponent: () => import('../tabs/clans/clans.page').then((m) => m.ClansPage),
+      },
+      {
+        path: 'search-movies/:id',
+        loadComponent: () => import('../pages/search-movies/search-movies.page').then(m => m.SearchMoviesPage)
       },
       {
         path: '',

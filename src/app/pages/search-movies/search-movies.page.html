@@ -1,0 +1,65 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <button class="custom-back-btn" (click)="goBack()">
+        <img src="assets/icon/arrow-back.svg" alt="Atrás">
+      </button>
+    </ion-buttons>
+    <ion-title>Buscar películas y series</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+
+    <div class="search-block">
+      <div class="search-input-wrapper">
+        <img src="assets/icon/search-icon.svg" alt="Buscar" class="search-icon" />
+        <input type="text" [(ngModel)]="searchText" (input)="buscarPeliculas()" placeholder="Buscar película o serie..."
+          class="custom-input" />
+      </div>
+    </div>
+
+    <h3 class="section-title">
+      {{ searchText.trim() ? 'Resultados de búsqueda' : 'Populares' }}
+    </h3>
+
+    <div *ngIf="loading" class="empty-state">
+      <p>Cargando...</p>
+    </div>
+
+    <div *ngIf="!loading && movies.length === 0" class="empty-state">
+      <p>No se encontraron resultados.</p>
+    </div>
+
+    <div class="movies-wrapper" *ngIf="!loading && movies.length > 0">
+      <div class="custom-movie-item" *ngFor="let movie of movies">
+        <div class="movie-clickable-area">
+          <div class="poster-container">
+            <img [src]="getPoster(movie.poster_path)" alt="Poster" class="movie-poster" />
+          </div>
+
+          <div class="movie-info-container">
+            <span class="movie-title">{{ movie.title || movie.name }}</span>
+            <span class="movie-year">
+              ({{
+              movie.release_date
+              ? (movie.release_date | slice:0:4)
+              : movie.first_air_date
+              ? (movie.first_air_date | slice:0:4)
+              : '---'
+              }})
+            </span>
+          </div>
+        </div>
+
+        <div class="options-container">
+          <button type="button" class="add-btn" (click)="anadirPelicula(movie)">
+            <img src="assets/icon/add-icon.svg" alt="Añadir" class="action-icon-img" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

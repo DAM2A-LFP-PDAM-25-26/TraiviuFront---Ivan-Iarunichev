@@ -20,14 +20,14 @@ ion-toolbar {
   padding-bottom: 40px;
 }
 
-.top-row {
-  margin-bottom: 18px;
-}
-
 .custom-back-btn {
   background: transparent;
   border: none;
-  padding: 0;
+  padding: 0 0 0 20px;
+  display: flex;
+  margin-right: 0px;
+  align-items: center;
+  justify-content: center;
 }
 
 .custom-back-btn img {
@@ -35,23 +35,43 @@ ion-toolbar {
   height: 20px;
 }
 
+.movie-clickable-area {
+  pointer-events: none;
+}
+
+.options-container,
+.add-btn,
+.custom-back-btn {
+  pointer-events: auto;
+}
+
 .search-block {
   margin-bottom: 22px;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(243, 244, 244, 0.22);
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .custom-input {
   width: 100%;
   background: transparent;
   border: none;
-  border-bottom: 1px solid rgba(243, 244, 244, 0.22);
   color: $text-main;
   font-size: 1rem;
-  padding: 10px 4px;
+  padding: 10px 0;
   outline: none;
-}
-
-.custom-input::placeholder {
-  color: $text-muted;
 }
 
 .section-title {
@@ -95,8 +115,8 @@ ion-toolbar {
 }
 
 .movie-poster {
-  width: 45px;
-  height: 65px;
+  width: 70px;
+  height: 100px;
   border-radius: 6px;
   object-fit: cover;
 }
@@ -128,8 +148,29 @@ ion-toolbar {
 }
 
 .action-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   display: block;
+}
+
+.add-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  box-shadow: none;
+  outline: none;
+}
+
+.add-btn:focus,
+.add-btn:active,
+.add-btn:hover {
+  background: transparent;
+  box-shadow: none;
 }

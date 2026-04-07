@@ -18,6 +18,7 @@
           <img src="assets/icon/arrow-back.svg" alt="Atrás">
         </button>
       </ion-buttons>
+
       <div class="page-header">
         <h1 class="page-title">{{ nombreLista }}</h1>
       </div>
@@ -26,30 +27,34 @@
     <div class="filter-row">
       <span class="filter-label">Filtro:</span>
 
-      <ion-select class="filter-select" interface="popover" placeholder="Selecciona" [(ngModel)]="filtroPeriodo">
+      <ion-select class="filter-select" interface="popover" placeholder="Selecciona" [(ngModel)]="filtroPeriodo"
+        (ionChange)="aplicarFiltros()">
         <ion-select-option value="todos">Todos</ion-select-option>
         <ion-select-option value="semana">Esta semana</ion-select-option>
         <ion-select-option value="mes">Este mes</ion-select-option>
-        <ion-select-option value="mesAnterior">Mes anterior</ion-select-option>
         <ion-select-option value="anio">Este año</ion-select-option>
+        <ion-select-option value="mesAnterior">Mes anterior</ion-select-option>
         <ion-select-option value="anioAnterior">Año anterior</ion-select-option>
       </ion-select>
     </div>
 
-    <div class="search-container">
-      <ion-searchbar class="custom-searchbar" placeholder="Buscar en la lista..." mode="ios">
-      </ion-searchbar>
+    <div class="search-block">
+      <div class="search-input-wrapper">
+        <img src="assets/icon/search-icon.svg" alt="Buscar" class="search-icon" />
+        <input type="text" [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()" placeholder="Buscar en la lista..."
+          class="custom-input" />
+      </div>
     </div>
 
     <h3 class="section-title">Añadidas recientemente</h3>
     <div class="title-divider"></div>
 
-    <div *ngIf="peliculas.length === 0" class="empty-state">
+    <div *ngIf="peliculasFiltradas.length === 0" class="empty-state">
       <p>Aún no tienes películas o series guardadas.</p>
     </div>
 
-    <div class="movies-wrapper" *ngIf="peliculas.length > 0">
-      <div class="custom-movie-item" *ngFor="let peli of peliculas">
+    <div class="movies-wrapper" *ngIf="peliculasFiltradas.length > 0">
+      <div class="custom-movie-item" *ngFor="let peli of peliculasFiltradas">
         <div class="movie-clickable-area">
           <div class="poster-container">
             <img [src]="peli.posterUrl" alt="Poster" class="movie-poster" />
@@ -62,13 +67,13 @@
         </div>
 
         <div class="options-container" (click)="borrarPelicula(peli.id)">
-          <ion-icon name="trash-outline" class="delete-icon"></ion-icon>
+          <img src="assets/icon/trash-icon.svg" alt="Eliminar" class="delete-icon-img" />
         </div>
       </div>
     </div>
 
     <div class="add-movie-container">
-      <ion-button expand="block" class="create-btn" fill="solid" routerLink="/search-movies">
+      <ion-button expand="block" class="create-btn" fill="solid" (click)="abrirBuscadorPeliculas()">
         + Añadir película/serie
       </ion-button>
     </div>
