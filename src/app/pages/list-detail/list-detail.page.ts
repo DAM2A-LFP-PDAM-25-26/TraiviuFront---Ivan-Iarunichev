@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ListItemService } from '../../services/list-item';
 import { ListsService, TraiviuList } from '../../core/api/lists';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
@@ -33,6 +33,8 @@ export class ListDetailPage implements OnInit {
     private listsService: ListsService,
     private router: Router,
     private modalController: ModalController,
+    private alertController: AlertController,
+    private toastController: ToastController,
   ) {}
 
   ngOnInit() {
@@ -192,5 +194,92 @@ export class ListDetailPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/tabs/lists']);
+  }
+
+  // ----- Opciones del popover -----
+
+  async presentEditListAlertDetalle() {
+    const alert = await this.alertController.create({
+      header: 'Renombrar lista',
+      inputs: [
+        {
+          name: 'nombre',
+          type: 'text',
+          placeholder: 'Nuevo nombre',
+          value: this.nombreLista,
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Guardar',
+          handler: (data) => {
+            const nuevoNombre = (data?.nombre || '').trim();
+            if (!nuevoNombre) {
+              return false;
+            }
+
+            this.listsService
+              .updateListName(this.listId, nuevoNombre)
+              .subscribe({
+                next: async () => {
+                  this.nombreLista = nuevoNombre;
+                  const toast = await this.toastController.create({
+                    message: 'Lista renombrada',
+                    duration: 1500,
+                    position: 'bottom',
+                  });
+                  toast.present();
+                },
+                error: (err) => {
+                  console.error('Error al renombrar la lista', err);
+                },
+              });
+
+            return true;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async deleteListDetalle() {
+    const alert = await this.alertController.create({
+      header: 'Eliminar lista',
+      message: '¿Seguro que quieres eliminar esta lista?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.listsService.deleteList(this.listId).subscribe({
+              next: async () => {
+                const toast = await this.toastController.create({
+                  message: 'Lista eliminada',
+                  duration: 1500,
+                  position: 'bottom',
+                });
+                toast.present();
+                this.router.navigate(['/tabs/lists']);
+              },
+              error: (err) => {
+                console.error('Error al eliminar la lista', err);
+              },
+            });
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }

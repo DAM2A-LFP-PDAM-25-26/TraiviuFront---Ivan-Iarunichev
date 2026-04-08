@@ -13,6 +13,7 @@
   <div class="main-container">
 
     <div class="list-title-row">
+
       <ion-buttons slot="start">
         <button class="custom-back-btn" (click)="goBack()">
           <img src="assets/icon/arrow-back.svg" alt="Atrás">
@@ -20,7 +21,41 @@
       </ion-buttons>
 
       <div class="page-header">
-        <h1 class="page-title">{{ nombreLista }}</h1>
+        <h1 class="page-title">
+          {{ nombreLista }}
+        </h1>
+
+        <button class="list-options-btn" [id]="'trigger-detalle-' + listId">
+          <img src="assets/icon/more.svg" alt="Opciones" class="list-options-img" />
+        </button>
+
+        <ion-popover [trigger]="'trigger-detalle-' + listId" triggerAction="click" alignment="end" side="bottom"
+          dismissOnSelect="true" class="custom-popover">
+
+          <ng-template>
+            <ion-content class="popover-content-bg">
+              <ion-list class="popover-list">
+
+                <ion-item button (click)="abrirBuscadorPeliculas()" lines="none">
+                  <ion-icon name="add-outline" slot="start" class="popover-icon"></ion-icon>
+                  <ion-label>Añadir películas</ion-label>
+                </ion-item>
+
+                <ion-item button (click)="presentEditListAlertDetalle()" lines="none">
+                  <ion-icon name="pencil-outline" slot="start" class="popover-icon"></ion-icon>
+                  <ion-label>Renombrar lista</ion-label>
+                </ion-item>
+
+                <ion-item button (click)="deleteListDetalle()" lines="none" class="delete-item">
+                  <ion-icon name="trash-outline" slot="start" class="popover-icon-danger"></ion-icon>
+                  <ion-label color="danger">Eliminar lista</ion-label>
+                </ion-item>
+
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+
       </div>
     </div>
 

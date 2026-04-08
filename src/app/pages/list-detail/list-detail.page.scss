@@ -21,16 +21,17 @@ ion-toolbar {
 }
 
 .page-header {
-  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .page-title {
-  font-family: "Poppins", sans-serif;
+  margin: 0;
   font-size: 1.6rem;
   font-weight: 700;
-  color: #{$text-main};
-  margin: 0;
-  letter-spacing: 0.5px;
+  color: #f3f4f4;
 }
 
 .brand-container {
@@ -98,9 +99,24 @@ ion-toolbar {
 .list-title-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 12px;
-  margin: 24px 0 8px;
+}
+
+.list-options-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-options-img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  opacity: 0.85;
 }
 
 .filter-row {
