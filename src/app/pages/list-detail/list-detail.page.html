@@ -90,7 +90,7 @@
 
     <div class="movies-wrapper" *ngIf="peliculasFiltradas.length > 0">
       <div class="custom-movie-item" *ngFor="let peli of peliculasFiltradas">
-        <div class="movie-clickable-area">
+        <div class="movie-clickable-area" (click)="abrirDetalleDesdeLista(peli)">
           <div class="poster-container">
             <img [src]="peli.posterUrl" alt="Poster" class="movie-poster" />
           </div>
@@ -104,14 +104,14 @@
         <div class="options-container" (click)="borrarPelicula(peli.id)">
           <img src="assets/icon/trash-icon.svg" alt="Eliminar" class="delete-icon-img" />
         </div>
-      </div>
     </div>
+  </div>
 
-    <div class="add-movie-container">
-      <ion-button expand="block" class="create-btn" fill="solid" (click)="abrirBuscadorPeliculas()">
-        + Añadir película/serie
-      </ion-button>
-    </div>
+  <div class="add-movie-container">
+    <ion-button expand="block" class="create-btn" fill="solid" (click)="abrirBuscadorPeliculas()">
+      + Añadir película/serie
+    </ion-button>
+  </div>
 
   </div>
 </ion-content>

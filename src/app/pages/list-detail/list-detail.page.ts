@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { SearchMoviesPage } from '../search-movies/search-movies.page';
+import { MediaDetailPage } from '../media-detail/media-detail.page';
 
 @Component({
   selector: 'app-list-detail',
@@ -287,5 +288,23 @@ export class ListDetailPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async abrirDetalleDesdeLista(peli: any) {
+    const tmdbId = Number(peli.externalApiId || peli.tmdbId || peli.id);
+
+    const mediaType: 'movie' | 'tv' =
+      peli.mediaType === 'tv' || peli.tipo === 'serie' ? 'tv' : 'movie';
+
+    const modal = await this.modalController.create({
+      component: MediaDetailPage,
+      componentProps: {
+        tmdbId,
+        mediaType,
+      },
+      cssClass: 'media-detail-modal',
+    });
+
+    await modal.present();
   }
 }

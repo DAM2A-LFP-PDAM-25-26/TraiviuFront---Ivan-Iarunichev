@@ -1,13 +1,71 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>catalog</ion-title>
+    <ion-title>
+      <div class="brand-container">
+        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+        <span class="brand-text">raiviu</span>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">catalog</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="main-container">
+
+    <section class="catalog-section">
+      <div class="section-header">
+        <h2 class="section-title">Tendencias</h2>
+      </div>
+
+      <div *ngIf="loadingTrending" class="loading-state">Cargando...</div>
+
+      <div class="horizontal-list" *ngIf="!loadingTrending">
+        <div class="catalog-card" *ngFor="let item of trendingItems" (click)="abrirDetalle(item)">
+          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+          <div class="catalog-info">
+            <span class="catalog-title">{{ item.title }}</span>
+            <span class="catalog-meta">
+              {{ item.year || '—' }} · {{ item.mediaType === 'tv' ? 'Serie' : 'Película' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section">
+      <div class="section-header">
+        <h2 class="section-title">Estrenos</h2>
+      </div>
+
+      <div *ngIf="loadingReleases" class="loading-state">Cargando...</div>
+
+      <div class="horizontal-list" *ngIf="!loadingReleases">
+        <div class="catalog-card" *ngFor="let item of releaseItems" (click)="abrirDetalle(item)">
+          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+          <div class="catalog-info">
+            <span class="catalog-title">{{ item.title }}</span>
+            <span class="catalog-meta">{{ item.year || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section">
+      <div class="section-header">
+        <h2 class="section-title">Imperdibles</h2>
+      </div>
+
+      <div *ngIf="loadingMustWatch" class="loading-state">Cargando...</div>
+
+      <div class="horizontal-list" *ngIf="!loadingMustWatch">
+        <div class="catalog-card" *ngFor="let item of mustWatchItems" (click)="abrirDetalle(item)">
+          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+          <div class="catalog-info">
+            <span class="catalog-title">{{ item.title }}</span>
+            <span class="catalog-meta">{{ item.year || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </ion-content>

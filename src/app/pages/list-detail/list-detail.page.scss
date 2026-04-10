@@ -38,8 +38,8 @@ ion-toolbar {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 0px;
-  margin: 10px 40px 10px 0;
+  padding: 10px;
+  gap: 0;
 }
 
 .brand-logo-t {
@@ -68,7 +68,7 @@ ion-toolbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 18px 0 25px;
+  margin: 18px 20px 25px;
 }
 
 .search-input-wrapper {
@@ -124,6 +124,7 @@ ion-toolbar {
   align-items: center;
   justify-content: center;
   gap: 15px;
+  margin-left: 20px;
   margin-bottom: 15px;
   width: 100%;
 }
@@ -270,9 +271,11 @@ ion-toolbar {
       background-color: rgba(255, 255, 255, 0.1);
     }
 
-    ion-icon {
-      color: #{$text-muted};
-      font-size: 1.6rem;
+    .delete-icon-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
     }
   }
 }

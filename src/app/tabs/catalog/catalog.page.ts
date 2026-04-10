@@ -1,20 +1,125 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { TmdbService } from '../../services/tmdb';
+import { MediaDetailPage } from '../../pages/media-detail/media-detail.page';
 
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.page.html',
   styleUrls: ['./catalog.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule],
 })
 export class CatalogPage implements OnInit {
+  trendingItems: any[] = [];
+  releaseItems: any[] = [];
+  mustWatchItems: any[] = [];
 
-  constructor() { }
+  loadingTrending = true;
+  loadingReleases = true;
+  loadingMustWatch = true;
+
+  constructor(
+    private tmdbService: TmdbService,
+    private modalController: ModalController,
+  ) {}
 
   ngOnInit() {
+    this.loadTrending();
+    this.loadReleases();
+    this.loadMustWatch();
   }
 
+  loadTrending() {
+    this.loadingTrending = true;
+
+    this.tmdbService.getTrendingAll().subscribe({
+      next: (resp) => {
+        this.trendingItems = (resp.results || [])
+          .slice(0, 10)
+          .map((item: any) => ({
+            id: item.id,
+            title: item.title || item.name || 'Sin título',
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
+            posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
+            mediaType: item.media_type || (item.title ? 'movie' : 'tv'),
+          }));
+        this.loadingTrending = false;
+      },
+      error: (err) => {
+        console.error('Error cargando tendencias', err);
+        this.loadingTrending = false;
+      },
+    });
+  }
+
+  loadReleases() {
+    this.loadingReleases = true;
+
+    this.tmdbService.getNowPlayingMovies().subscribe({
+      next: (resp) => {
+        this.releaseItems = (resp.results || [])
+          .slice(0, 10)
+          .map((item: any) => ({
+            id: item.id,
+            title: item.title || item.name || 'Sin título',
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
+            posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
+            mediaType: 'movie',
+          }));
+        this.loadingReleases = false;
+      },
+      error: (err) => {
+        console.error('Error cargando estrenos', err);
+        this.loadingReleases = false;
+      },
+    });
+  }
+
+  loadMustWatch() {
+    this.loadingMustWatch = true;
+
+    this.tmdbService.getTopRatedMovies().subscribe({
+      next: (resp) => {
+        this.mustWatchItems = (resp.results || [])
+          .slice(0, 10)
+          .map((item: any) => ({
+            id: item.id,
+            title: item.title || item.name || 'Sin título',
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
+            posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
+            mediaType: 'movie',
+          }));
+        this.loadingMustWatch = false;
+      },
+      error: (err) => {
+        console.error('Error cargando imperdibles', err);
+        this.loadingMustWatch = false;
+      },
+    });
+  }
+
+  async abrirDetalle(item: any) {
+    const modal = await this.modalController.create({
+      component: MediaDetailPage,
+      componentProps: {
+        tmdbId: item.id,
+        mediaType: item.mediaType || 'movie',
+      },
+      cssClass: 'media-detail-modal',
+      presentingElement: await this.modalController.getTop(), // opcional en iOS
+    });
+
+    await modal.present();
+  }
 }

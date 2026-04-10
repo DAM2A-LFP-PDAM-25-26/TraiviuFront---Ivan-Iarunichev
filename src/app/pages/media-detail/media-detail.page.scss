@@ -1,0 +1,135 @@
+$bg-main: #2c2c2c;
+$bg-card: #1e3a2f;
+$accent-color: #34a873;
+$text-main: #f3f4f4;
+$text-muted: #a3a3a3;
+
+ion-content {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+}
+
+ion-toolbar {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+  --border-width: 0;
+}
+
+.main-container {
+  padding: 18px 20px 30px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 14px;
+}
+
+.detail-title-block {
+  flex: 1;
+  text-align: center;
+  margin-right: 40px;
+  padding: 0 10px;
+}
+
+.detail-title {
+  margin: 0;
+  color: $text-main;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+
+  img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+}
+
+.poster-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 18px;
+}
+
+.main-poster {
+  width: 100%;
+  max-width: 240px;
+  border-radius: 14px;
+  border: 2px solid rgba($accent-color, 0.8);
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  color: $text-main;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.primary-btn {
+  --background: #{$bg-card};
+  --border-color: #{$accent-color};
+  --border-style: solid;
+  --border-width: 2px;
+  --border-radius: 10px;
+  --color: #{$text-main};
+  font-weight: 600;
+  text-transform: none;
+}
+
+.secondary-btn,
+.trailer-btn {
+  --border-color: #{$accent-color};
+  --color: #{$text-main};
+  --border-radius: 10px;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.info-block {
+  margin-bottom: 22px;
+}
+
+.section-title {
+  color: $text-main;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.overview-text {
+  color: $text-muted;
+  line-height: 1.55;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.loading-state {
+  text-align: center;
+  color: $text-main;
+  padding: 40px 20px;
+}

@@ -12,35 +12,29 @@
 <ion-content>
   <div class="main-container">
 
-    <!-- Título principal de la pantalla -->
     <div class="page-header">
       <h1 class="page-title">Mis Listas</h1>
     </div>
 
-    <!-- Botón Crear Nueva Lista -->
     <div class="create-list-container">
       <ion-button expand="block" class="create-btn" fill="solid" (click)="presentCreateListAlert()">
         + Crear nueva lista
       </ion-button>
     </div>
 
-    <!-- Título de sección -->
     <h3 class="section-title">Listas recientes</h3>
     <hr>
     <div class="title-divider"></div>
 
-    <!-- Estado de carga -->
     <div *ngIf="isLoading" class="ion-text-center loading-state">
       <ion-spinner name="crescent"></ion-spinner>
       <p>Cargando...</p>
     </div>
 
-    <!-- Estado vacío -->
     <div *ngIf="!isLoading && lists.length === 0" class="empty-state">
       <p>Aún no tienes listas creadas.</p>
     </div>
 
-    <!-- Lista de elementos -->
     <div class="lists-wrapper" *ngIf="!isLoading && lists.length > 0">
 
       <div class="custom-list-item" *ngFor="let list of lists">

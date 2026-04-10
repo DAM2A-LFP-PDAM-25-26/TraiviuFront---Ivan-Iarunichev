@@ -1,0 +1,64 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="detail-header">
+      <button class="icon-btn" (click)="cerrar()">
+        <img src="assets/icon/arrow-back.svg" alt="Atrás" />
+      </button>
+
+      <div class="detail-title-block">
+        <h1 class="detail-title">
+          {{ getTitle() }} <span *ngIf="getYear()">({{ getYear() }})</span>
+        </h1>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container" *ngIf="!loading && detail">
+    <div class="poster-wrapper">
+      <img [src]="getPoster(detail.poster_path)" [alt]="getTitle()" class="main-poster" />
+    </div>
+
+    <div class="meta-row">
+      <span>⭐ {{ getRating() }}</span>
+      <span>{{ getDuration() }}</span>
+      <span>{{ getGenres() }}</span>
+    </div>
+
+    <div class="action-buttons">
+      <ion-button expand="block" class="primary-btn" (click)="anadirALista()">
+        + Añadir a lista
+      </ion-button>
+
+      <ion-button expand="block" class="secondary-btn" fill="outline" (click)="recomendarAlClan()">
+        Recomendar al clan
+      </ion-button>
+    </div>
+
+    <div class="info-block">
+      <h3 class="section-title">Sinopsis</h3>
+      <p class="overview-text">
+        {{ detail.overview || 'No hay sinopsis disponible.' }}
+      </p>
+    </div>
+
+    <div class="info-block">
+      <h3 class="section-title">Tráiler</h3>
+
+      <div *ngIf="trailerEmbedUrl; else noTrailer" class="trailer-wrapper">
+        <iframe [src]="trailerEmbedUrl | safeUrl" width="100%" height="300" frameborder="0" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+
+      <ng-template #noTrailer>
+        <p class="overview-text">No hay tráiler disponible.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalle...</p>
+  </div>
+</ion-content>

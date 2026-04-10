@@ -20,7 +20,65 @@ export class TmdbService {
       .set('language', 'es-ES')
       .set('page', '1');
 
-    return this.http.get(`${this.baseUrl}/movie/popular`, { params });
+    return this.http.get<any>(`${this.baseUrl}/movie/popular`, { params });
+  }
+
+  getTrendingAll(): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES');
+
+    return this.http.get<any>(`${this.baseUrl}/trending/all/week`, { params });
+  }
+
+  getNowPlayingMovies(): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES')
+      .set('page', '1');
+
+    return this.http.get<any>(`${this.baseUrl}/movie/now_playing`, { params });
+  }
+
+  getTopRatedMovies(): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES')
+      .set('page', '1');
+
+    return this.http.get<any>(`${this.baseUrl}/movie/top_rated`, { params });
+  }
+
+  getMovieDetails(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES');
+
+    return this.http.get<any>(`${this.baseUrl}/movie/${id}`, { params });
+  }
+
+  getTvDetails(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES');
+
+    return this.http.get<any>(`${this.baseUrl}/tv/${id}`, { params });
+  }
+
+  getMovieVideos(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES');
+
+    return this.http.get<any>(`${this.baseUrl}/movie/${id}/videos`, { params });
+  }
+
+  getTvVideos(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('language', 'es-ES');
+
+    return this.http.get<any>(`${this.baseUrl}/tv/${id}/videos`, { params });
   }
 
   searchMulti(query: string): Observable<any> {
@@ -31,7 +89,7 @@ export class TmdbService {
       .set('page', '1')
       .set('include_adult', 'false');
 
-    return this.http.get(`${this.baseUrl}/search/multi`, { params });
+    return this.http.get<any>(`${this.baseUrl}/search/multi`, { params });
   }
 
   getPosterUrl(path: string | null): string {
