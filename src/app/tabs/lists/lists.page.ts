@@ -26,7 +26,7 @@ export class ListsPage implements OnInit {
     private alertController: AlertController,
     private actionSheetCtrl: ActionSheetController,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class ListsPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Nueva Lista',
       message: 'Dale un nombre a tu nueva lista',
-      cssClass: 'traiviu-custom-alert',
+      cssClass: 'custom-create-alert',
       inputs: [
         {
           name: 'listName',
@@ -70,7 +70,7 @@ export class ListsPage implements OnInit {
         },
         {
           text: 'Crear',
-          cssClass: 'alert-create-btn',
+          cssClass: 'alert-confirm-btn',
           handler: (data: any) => {
             if (data.listName && data.listName.trim() !== '') {
               this.createNewList(data.listName.trim());
@@ -83,7 +83,6 @@ export class ListsPage implements OnInit {
     await alert.present();
   }
 
-  // Llama al backend
   private createNewList(name: string) {
     this.isLoading = true;
 
@@ -93,7 +92,6 @@ export class ListsPage implements OnInit {
         this.isLoading = false;
         this.loadLists();
       },
-
       error: (err: any) => {
         console.error('Error en la petición de crear lista:', err);
         this.isLoading = false;
@@ -101,9 +99,9 @@ export class ListsPage implements OnInit {
       },
     });
   }
+
   goToListDetails(list: TraiviuList) {
     console.log('Navegando a los detalles de la lista:', list.name);
-
     this.router.navigate(['/tabs/lists', list.id]);
   }
 
@@ -128,7 +126,7 @@ export class ListsPage implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Eliminar lista clicked');
-            this.deleteList(list);
+            this.presentDeleteListAlert(list);
           },
         },
         {
@@ -142,20 +140,42 @@ export class ListsPage implements OnInit {
     await actionSheet.present();
   }
 
+  async presentDeleteListAlert(list: TraiviuList) {
+    const alert = await this.alertController.create({
+      header: 'Eliminar lista',
+      message: `¿Seguro que quieres eliminar "${list.name}"?`,
+      cssClass: 'custom-delete-alert',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'alert-cancel-btn',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'alert-delete-btn',
+          handler: () => {
+            this.deleteList(list);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   deleteList(list: TraiviuList) {
     this.isLoading = true;
 
     this.listsService.deleteList(list.id).subscribe({
       next: () => {
         console.log(`Lista ${list.name} eliminada con éxito del backend`);
-
         this.lists = this.lists.filter((l) => l.id !== list.id);
-
         this.isLoading = false;
       },
       error: (err: any) => {
         console.error('Error al borrar la lista en el backend:', err);
-
         this.loadLists();
       },
     });
@@ -165,7 +185,7 @@ export class ListsPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Editar Lista',
       message: 'Cambia el nombre de tu lista',
-      cssClass: 'traiviu-custom-alert',
+      cssClass: 'custom-rename-alert',
       inputs: [
         {
           name: 'newName',
@@ -183,7 +203,7 @@ export class ListsPage implements OnInit {
         },
         {
           text: 'Guardar',
-          cssClass: 'alert-create-btn',
+          cssClass: 'alert-confirm-btn',
           handler: (data: any) => {
             const newName = data.newName?.trim();
 
@@ -205,7 +225,7 @@ export class ListsPage implements OnInit {
       next: (updatedList: TraiviuList) => {
         console.log('Lista actualizada en la base de datos:', updatedList);
 
-        const index = this.lists.findIndex(l => l.id === listToUpdate.id);
+        const index = this.lists.findIndex((l) => l.id === listToUpdate.id);
 
         if (index !== -1) {
           this.lists[index].name = updatedList.name || newName;
@@ -217,7 +237,7 @@ export class ListsPage implements OnInit {
       error: (err: any) => {
         console.error('Error al editar la lista en el backend:', err);
         this.loadLists();
-      }
+      },
     });
   }
 }

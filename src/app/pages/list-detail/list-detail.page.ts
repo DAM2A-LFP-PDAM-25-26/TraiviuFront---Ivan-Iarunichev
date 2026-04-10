@@ -196,29 +196,32 @@ export class ListDetailPage implements OnInit {
     this.router.navigate(['/tabs/lists']);
   }
 
-  // ----- Opciones del popover -----
-
   async presentEditListAlertDetalle() {
     const alert = await this.alertController.create({
-      header: 'Renombrar lista',
+      header: 'Editar lista',
+      message: 'Cambia el nombre de tu lista',
+      cssClass: 'custom-rename-alert',
       inputs: [
         {
           name: 'nombre',
           type: 'text',
-          placeholder: 'Nuevo nombre',
+          placeholder: 'Ej. Favoritos',
           value: this.nombreLista,
+          attributes: { maxlength: 30 },
         },
       ],
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
+          cssClass: 'alert-cancel-btn',
         },
         {
           text: 'Guardar',
+          cssClass: 'alert-confirm-btn',
           handler: (data) => {
             const nuevoNombre = (data?.nombre || '').trim();
-            if (!nuevoNombre) {
+            if (!nuevoNombre || nuevoNombre === this.nombreLista) {
               return false;
             }
 
@@ -251,15 +254,18 @@ export class ListDetailPage implements OnInit {
   async deleteListDetalle() {
     const alert = await this.alertController.create({
       header: 'Eliminar lista',
-      message: '¿Seguro que quieres eliminar esta lista?',
+      message: `¿Seguro que quieres eliminar "${this.nombreLista}"?`,
+      cssClass: 'custom-delete-alert',
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
+          cssClass: 'alert-cancel-btn',
         },
         {
           text: 'Eliminar',
           role: 'destructive',
+          cssClass: 'alert-delete-btn',
           handler: () => {
             this.listsService.deleteList(this.listId).subscribe({
               next: async () => {

@@ -39,7 +39,7 @@ ion-toolbar {
   align-items: baseline;
   justify-content: center;
   gap: 0px;
-  margin-top: 15px;
+  margin: 10px 40px 10px 0;
 }
 
 .brand-logo-t {
@@ -265,17 +265,14 @@ ion-toolbar {
     justify-content: center;
     padding: 15px 18px;
     cursor: pointer;
-    border-left: 1px solid rgba(52, 168, 115, 0.3);
 
     &:active {
-      background-color: rgba(255, 73, 97, 0.1);
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
-    .delete-icon-img {
-      width: 25px;
-      height: 25px;
-      object-fit: contain;
-      display: block;
+    ion-icon {
+      color: #{$text-muted};
+      font-size: 1.6rem;
     }
   }
 }
