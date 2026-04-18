@@ -19,16 +19,22 @@
 
       <div *ngIf="loadingTrending" class="loading-state">Cargando...</div>
 
-      <div class="horizontal-list" *ngIf="!loadingTrending">
-        <div class="catalog-card" *ngFor="let item of trendingItems" (click)="abrirDetalle(item)">
-          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
-          <div class="catalog-info">
-            <span class="catalog-title">{{ item.title }}</span>
-            <span class="catalog-meta">
-              {{ item.year || '—' }} · {{ item.mediaType === 'tv' ? 'Serie' : 'Película' }}
-            </span>
+      <div class="slider-wrapper" *ngIf="!loadingTrending">
+        <button class="scroll-btn left" (click)="scrollRow(trendingRow, 'left')">‹</button>
+
+        <div class="horizontal-list" #trendingRow>
+          <div class="catalog-card" *ngFor="let item of trendingItems" (click)="abrirDetalle(item)">
+            <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+            <div class="catalog-info">
+              <span class="catalog-title">{{ item.title }}</span>
+              <span class="catalog-meta">
+                {{ item.year || '—' }} · {{ item.mediaType === 'tv' ? 'Serie' : 'Película' }}
+              </span>
+            </div>
           </div>
         </div>
+
+        <button class="scroll-btn right" (click)="scrollRow(trendingRow, 'right')">›</button>
       </div>
     </section>
 
@@ -39,14 +45,20 @@
 
       <div *ngIf="loadingReleases" class="loading-state">Cargando...</div>
 
-      <div class="horizontal-list" *ngIf="!loadingReleases">
-        <div class="catalog-card" *ngFor="let item of releaseItems" (click)="abrirDetalle(item)">
-          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
-          <div class="catalog-info">
-            <span class="catalog-title">{{ item.title }}</span>
-            <span class="catalog-meta">{{ item.year || '—' }}</span>
+      <div class="slider-wrapper" *ngIf="!loadingReleases">
+        <button class="scroll-btn left" (click)="scrollRow(releaseRow, 'left')">‹</button>
+
+        <div class="horizontal-list" #releaseRow>
+          <div class="catalog-card" *ngFor="let item of releaseItems" (click)="abrirDetalle(item)">
+            <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+            <div class="catalog-info">
+              <span class="catalog-title">{{ item.title }}</span>
+              <span class="catalog-meta">{{ item.year || '—' }}</span>
+            </div>
           </div>
         </div>
+
+        <button class="scroll-btn right" (click)="scrollRow(releaseRow, 'right')">›</button>
       </div>
     </section>
 
@@ -57,15 +69,22 @@
 
       <div *ngIf="loadingMustWatch" class="loading-state">Cargando...</div>
 
-      <div class="horizontal-list" *ngIf="!loadingMustWatch">
-        <div class="catalog-card" *ngFor="let item of mustWatchItems" (click)="abrirDetalle(item)">
-          <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
-          <div class="catalog-info">
-            <span class="catalog-title">{{ item.title }}</span>
-            <span class="catalog-meta">{{ item.year || '—' }}</span>
+      <div class="slider-wrapper" *ngIf="!loadingMustWatch">
+        <button class="scroll-btn left" (click)="scrollRow(mustWatchRow, 'left')">‹</button>
+
+        <div class="horizontal-list" #mustWatchRow>
+          <div class="catalog-card" *ngFor="let item of mustWatchItems" (click)="abrirDetalle(item)">
+            <img [src]="item.posterUrl" [alt]="item.title" class="catalog-poster" />
+            <div class="catalog-info">
+              <span class="catalog-title">{{ item.title }}</span>
+              <span class="catalog-meta">{{ item.year || '—' }}</span>
+            </div>
           </div>
         </div>
+
+        <button class="scroll-btn right" (click)="scrollRow(mustWatchRow, 'right')">›</button>
       </div>
     </section>
+
   </div>
 </ion-content>

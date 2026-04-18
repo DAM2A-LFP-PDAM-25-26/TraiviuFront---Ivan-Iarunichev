@@ -22,7 +22,7 @@ export class CatalogPage implements OnInit {
 
   constructor(
     private tmdbService: TmdbService,
-    private modalController: ModalController,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -41,10 +41,7 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(
-              0,
-              4,
-            ),
+            year: (item.release_date || item.first_air_date || '').substring(0, 4),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: item.media_type || (item.title ? 'movie' : 'tv'),
           }));
@@ -67,10 +64,7 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(
-              0,
-              4,
-            ),
+            year: (item.release_date || item.first_air_date || '').substring(0, 4),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: 'movie',
           }));
@@ -93,10 +87,7 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(
-              0,
-              4,
-            ),
+            year: (item.release_date || item.first_air_date || '').substring(0, 4),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: 'movie',
           }));
@@ -109,6 +100,15 @@ export class CatalogPage implements OnInit {
     });
   }
 
+  scrollRow(container: HTMLElement, direction: 'left' | 'right') {
+    const amount = 320;
+
+    container.scrollBy({
+      left: direction === 'right' ? amount : -amount,
+      behavior: 'smooth',
+    });
+  }
+
   async abrirDetalle(item: any) {
     const modal = await this.modalController.create({
       component: MediaDetailPage,
@@ -117,7 +117,7 @@ export class CatalogPage implements OnInit {
         mediaType: item.mediaType || 'movie',
       },
       cssClass: 'media-detail-modal',
-      presentingElement: await this.modalController.getTop(), // opcional en iOS
+      presentingElement: await this.modalController.getTop(),
     });
 
     await modal.present();

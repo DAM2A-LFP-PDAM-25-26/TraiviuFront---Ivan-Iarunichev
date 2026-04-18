@@ -17,4 +17,8 @@ export const routes: Routes = [
     path: 'media-detail',
     loadComponent: () => import('./pages/media-detail/media-detail.page').then( m => m.MediaDetailPage)
   },
+  {
+    path: 'select-list',
+    loadComponent: () => import('./pages/select-list/select-list.page').then( m => m.SelectListPage)
+  },
 ];

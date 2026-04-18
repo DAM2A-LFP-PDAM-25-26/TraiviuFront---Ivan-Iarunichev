@@ -1,0 +1,30 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Selecciona una lista</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+    <div *ngIf="loading" class="loading-state">
+      Cargando listas...
+    </div>
+
+    <div *ngIf="!loading && listas.length === 0" class="empty-state">
+      No tienes listas creadas.
+    </div>
+
+    <div class="lists-wrapper" *ngIf="!loading && listas.length > 0">
+      <button
+        class="list-item-btn"
+        *ngFor="let lista of listas"
+        (click)="seleccionarLista(lista)"
+      >
+        {{ lista.name }}
+      </button>
+    </div>
+  </div>
+</ion-content>

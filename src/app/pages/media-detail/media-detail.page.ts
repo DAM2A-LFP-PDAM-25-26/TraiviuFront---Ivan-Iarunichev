@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { TmdbService } from '../../services/tmdb';
 import { SafeUrlPipe } from '../../pipes/safe-url-pipe';
+import { SelectListPage } from '../select-list/select-list.page';
 
 @Component({
   selector: 'app-media-detail',
@@ -134,8 +135,24 @@ export class MediaDetailPage implements OnInit {
     return '—';
   }
 
-  anadirALista() {
-    console.log('Abrir diálogo para añadir a lista');
+  async anadirALista() {
+    const mediaData = {
+      externalApiId: this.tmdbId.toString(),
+      title: this.getTitle(),
+      year: this.getYear(),
+      posterUrl: this.getPoster(this.detail?.poster_path),
+      mediaType: this.mediaType,
+    };
+
+    const modal = await this.modalController.create({
+      component: SelectListPage,
+      componentProps: {
+        mediaData,
+      },
+      cssClass: 'select-list-modal',
+    });
+
+    await modal.present();
   }
 
   recomendarAlClan() {
