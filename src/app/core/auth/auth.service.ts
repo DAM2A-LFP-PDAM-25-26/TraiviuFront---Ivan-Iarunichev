@@ -22,12 +22,13 @@ export class AuthService {
   private readonly apiUrl = 'http://localhost:8085/api/auth';
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'auth_user';
-  private readonly avatarKey = 'auth_avatar';
+  private readonly avatarKeyPrefix = 'auth_avatar_';
+  private readonly defaultAvatar = 'assets/icon/default-avatar.png';
 
   private userSubject = new BehaviorSubject<AuthResponse | null>(this.getStoredUser());
   user$ = this.userSubject.asObservable();
 
-  private avatarSubject = new BehaviorSubject<string | null>(this.getStoredAvatar());
+  private avatarSubject = new BehaviorSubject<string | null>(this.getInitialAvatar());
   avatar$ = this.avatarSubject.asObservable();
 
   constructor(private http: HttpClient) {}
@@ -63,6 +64,26 @@ export class AuthService {
   private setSession(auth: AuthResponse): void {
     this.setToken(auth.token);
     this.setUser(auth);
+
+    const avatar = this.getStoredAvatarByUserId(auth.userId) || this.defaultAvatar;
+    this.avatarSubject.next(avatar);
+
+    if (!this.getStoredAvatarByUserId(auth.userId)) {
+      localStorage.setItem(this.getAvatarKey(auth.userId), this.defaultAvatar);
+    }
+  }
+
+  private getInitialAvatar(): string | null {
+    const user = this.getStoredUser();
+    if (!user) {
+      return this.defaultAvatar;
+    }
+
+    return this.getStoredAvatarByUserId(user.userId) || this.defaultAvatar;
+  }
+
+  private getAvatarKey(userId: string): string {
+    return `${this.avatarKeyPrefix}${userId}`;
   }
 
   setToken(token: string): void {
@@ -97,28 +118,39 @@ export class AuthService {
   }
 
   setAvatar(url: string | null): void {
-    if (url) {
-      localStorage.setItem(this.avatarKey, url);
-    } else {
-      localStorage.removeItem(this.avatarKey);
-    }
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) return;
 
-    this.avatarSubject.next(url);
+    const finalAvatar = url || this.defaultAvatar;
+    localStorage.setItem(this.getAvatarKey(currentUser.userId), finalAvatar);
+    this.avatarSubject.next(finalAvatar);
   }
 
   getStoredAvatar(): string | null {
-    return localStorage.getItem(this.avatarKey);
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) {
+      return this.defaultAvatar;
+    }
+
+    return this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar;
+  }
+
+  private getStoredAvatarByUserId(userId: string): string | null {
+    return localStorage.getItem(this.getAvatarKey(userId));
   }
 
   clearAvatar(): void {
-    localStorage.removeItem(this.avatarKey);
-    this.avatarSubject.next(null);
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) return;
+
+    localStorage.setItem(this.getAvatarKey(currentUser.userId), this.defaultAvatar);
+    this.avatarSubject.next(this.defaultAvatar);
   }
 
   logout(): void {
     this.clearToken();
     this.clearUser();
-    this.clearAvatar();
+    this.avatarSubject.next(this.defaultAvatar);
   }
 
   isLoggedIn(): boolean {

@@ -75,12 +75,11 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   changeProfileImage() {
-    const demoAvatar = 'assets/icon/profile-avatar.png';
-    this.authService.setAvatar(demoAvatar);
+    this.router.navigateByUrl('/tabs/edit-profile');
   }
 
   removeProfileImage() {
-    this.authService.setAvatar(this.defaultProfileImage);
+    this.authService.clearAvatar();
   }
 
   async logout() {
