@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -16,7 +16,7 @@ import { AuthService } from '../../core/auth/auth.service';
   standalone: true,
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   mode: 'login' | 'register' = 'login';
   isSubmitting = false;
 
@@ -53,6 +53,12 @@ export class LoginPage {
     displayNameControl?.updateValueAndValidity();
   }
 
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigateByUrl('/tabs/catalog', { replaceUrl: true });
+    }
+  }
+
   async submit() {
     if (this.authForm.invalid) {
       this.authForm.markAllAsTouched();
@@ -60,7 +66,8 @@ export class LoginPage {
     }
 
     const loading = await this.loadingController.create({
-      message: this.mode === 'login' ? 'Iniciando sesión...' : 'Creando cuenta...',
+      message:
+        this.mode === 'login' ? 'Iniciando sesión...' : 'Creando cuenta...',
       spinner: 'crescent',
       cssClass: 'custom-auth-loading',
       backdropDismiss: false,
@@ -93,7 +100,8 @@ export class LoginPage {
         this.isSubmitting = false;
 
         const alert = await this.alertController.create({
-          header: this.mode === 'login' ? 'Error de acceso' : 'Error de registro',
+          header:
+            this.mode === 'login' ? 'Error de acceso' : 'Error de registro',
           message:
             err?.error?.message ||
             err?.error?.error ||
