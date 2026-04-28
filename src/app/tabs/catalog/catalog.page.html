@@ -1,11 +1,27 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title>
-      <div class="brand-container">
-        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
-        <span class="brand-text">raiviu</span>
-      </div>
+      <button class="brand-button" type="button" (click)="goToHome()">
+        <div class="brand-container">
+          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <span class="brand-text">raiviu</span>
+        </div>
+      </button>
     </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="profile-btn" (click)="goToSettings()">
+        <ng-container *ngIf="profileImageUrl; else defaultProfileIcon">
+          <div class="profile-avatar-mini">
+            <img [src]="profileImageUrl" alt="Avatar de perfil" />
+          </div>
+        </ng-container>
+
+        <ng-template #defaultProfileIcon>
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ng-template>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

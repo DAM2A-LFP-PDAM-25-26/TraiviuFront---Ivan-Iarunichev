@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <button class="brand-button" type="button" (click)="goToHome()">
+        <div class="brand-container">
+          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <span class="brand-text">raiviu</span>
+        </div>
+      </button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">Configuración</h1>
+    </div>
+
+    <div class="card settings-card">
+      <div class="profile-header">
+        <button class="avatar-circle" type="button" (click)="changeProfileImage()">
+          <ng-container *ngIf="profileImageUrl; else defaultAvatar">
+            <img [src]="profileImageUrl" alt="Avatar de perfil" class="profile-avatar-image" />
+          </ng-container>
+
+          <ng-template #defaultAvatar>
+            <ion-icon name="person-outline"></ion-icon>
+          </ng-template>
+        </button>
+
+        <div class="profile-info">
+          <div class="profile-name">{{ displayName }}</div>
+          <div class="profile-email">{{ email }}</div>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="edit-btn" fill="outline" (click)="goToEditProfile()">
+        Editar perfil
+      </ion-button>
+
+      <ion-button *ngIf="profileImageUrl" expand="block" class="remove-avatar-btn" fill="clear"
+        (click)="removeProfileImage()">
+        Quitar foto de perfil
+      </ion-button>
+    </div>
+
+    <div class="card settings-card">
+      <h2 class="section-title">Ajustes</h2>
+      <div class="title-divider"></div>
+
+      <ion-list lines="none" class="settings-list">
+        <ion-item class="settings-item">
+          <ion-label>
+            <div class="setting-title">Notificaciones del clan</div>
+            <div class="setting-subtitle">
+              Recibir avisos cuando haya actividad en tu clan.
+            </div>
+          </ion-label>
+          <ion-toggle class="settings-toggle" slot="end" [checked]="clanNotificationsEnabled"
+            (ionChange)="toggleClanNotifications($event)"></ion-toggle>
+        </ion-item>
+
+        <ion-item class="settings-item">
+          <ion-label>
+            <div class="setting-title">Sonido</div>
+            <div class="setting-subtitle">
+              Activar efectos de sonido dentro de la app.
+            </div>
+          </ion-label>
+          <ion-toggle class="settings-toggle" slot="end" [checked]="soundEnabled"
+            (ionChange)="toggleSound($event)"></ion-toggle>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div class="logout-container">
+      <ion-button expand="block" class="logout-btn" fill="solid" (click)="logout()">
+        Cerrar sesión
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

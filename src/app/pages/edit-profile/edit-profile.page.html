@@ -1,0 +1,108 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <button class="brand-button" type="button" (click)="goToHome()">
+        <div class="brand-container">
+          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <span class="brand-text">raiviu</span>
+        </div>
+      </button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">Editar perfil</h1>
+    </div>
+
+    <div class="card settings-card">
+      <div class="profile-header">
+        <label class="avatar-circle avatar-label" for="avatarInput">
+          <ng-container *ngIf="previewImageUrl; else defaultAvatar">
+            <img [src]="previewImageUrl" alt="Avatar de perfil" class="profile-avatar-image" />
+          </ng-container>
+
+          <ng-template #defaultAvatar>
+            <ion-icon name="person-outline"></ion-icon>
+          </ng-template>
+        </label>
+
+        <div class="profile-info">
+          <div class="profile-name">{{ profileForm.get('displayName')?.value || 'Usuario' }}</div>
+          <div class="profile-email">{{ profileForm.get('email')?.value || 'Sin email' }}</div>
+          <button type="button" class="change-photo-btn" (click)="fileInput.click()">
+            Cambiar foto
+          </button>
+        </div>
+      </div>
+
+      <input
+        #fileInput
+        id="avatarInput"
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="onAvatarSelected($event)"
+      />
+
+      <ion-button
+        *ngIf="previewImageUrl"
+        expand="block"
+        class="remove-avatar-btn"
+        fill="clear"
+        (click)="clearAvatar()"
+      >
+        Quitar foto de perfil
+      </ion-button>
+    </div>
+
+    <div class="card settings-card">
+      <h2 class="section-title">Información personal</h2>
+      <div class="title-divider"></div>
+
+      <form [formGroup]="profileForm" class="profile-form">
+        <div class="field-group">
+          <label class="field-label">Nombre de usuario</label>
+          <ion-item lines="none" class="custom-input-item">
+            <ion-input
+              formControlName="displayName"
+              type="text"
+              placeholder="Tu nombre"
+            ></ion-input>
+          </ion-item>
+          <div class="field-error" *ngIf="displayName?.touched && displayName?.invalid">
+            Introduce un nombre válido.
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Correo electrónico</label>
+          <ion-item lines="none" class="custom-input-item">
+            <ion-input
+              formControlName="email"
+              type="email"
+              placeholder="tuemail@gmail.com"
+            ></ion-input>
+          </ion-item>
+          <div class="field-error" *ngIf="email?.touched && email?.invalid">
+            Introduce un correo válido.
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="logout-container">
+      <ion-button
+        expand="block"
+        class="save-btn"
+        fill="solid"
+        [disabled]="profileForm.invalid"
+        (click)="save()"
+      >
+        Guardar cambios
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,234 @@
+$bg-main: #2c2c2c;
+$bg-card: #1e3a2f;
+$accent-color: #34a873;
+$text-main: #f3f4f4;
+$text-muted: #a3a3a3;
+$danger-color: #e04855;
+
+ion-content {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+}
+
+ion-toolbar {
+  --background: #{$bg-main};
+  --color: #{$text-main};
+  --border-width: 0;
+
+  ion-title {
+    padding: 0;
+  }
+}
+
+.brand-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  padding: 10px 15px 10px 10px;
+  gap: 0;
+}
+
+.brand-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.brand-logo-t {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0;
+  transform: translateY(4px);
+}
+
+.brand-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $text-main;
+  letter-spacing: 0;
+}
+
+.main-container {
+  padding: 20px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $text-main;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.section-title {
+  color: $text-main;
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.title-divider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background-color: rgba(243, 244, 244, 0.15);
+  margin-bottom: 12px;
+}
+
+.card {
+  background-color: $bg-main;
+  border-radius: 14px;
+  border: 1px solid $accent-color;
+  padding: 18px 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.settings-card {
+  margin-bottom: 18px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.avatar-circle {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  border-radius: 50%;
+  background: rgba(52, 168, 115, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  border: 2px solid $accent-color;
+  overflow: hidden;
+  padding: 0;
+
+  ion-icon {
+    font-size: 2rem;
+    color: $text-main;
+  }
+}
+
+.avatar-label {
+  cursor: pointer;
+}
+
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.profile-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: $text-main;
+}
+
+.profile-email {
+  font-size: 0.92rem;
+  color: $text-muted;
+}
+
+.change-photo-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-top: 2px;
+  color: $accent-color;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.remove-avatar-btn {
+  --color: #{$text-muted};
+  margin-top: 4px;
+  text-transform: none;
+  font-size: 0.9rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field-label {
+  color: $text-main;
+  font-size: 0.96rem;
+  font-weight: 500;
+}
+
+.custom-input-item {
+  --background: rgba(255, 255, 255, 0.04);
+  --color: #{$text-main};
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --min-height: 50px;
+  border: 1px solid rgba(52, 168, 115, 0.5);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-input-item ion-input {
+  --color: #{$text-main};
+  --placeholder-color: #{$text-muted};
+}
+
+.field-error {
+  font-size: 0.82rem;
+  color: $danger-color;
+  margin-left: 2px;
+}
+
+.logout-container {
+  margin-top: 16px;
+}
+
+.save-btn {
+  --background: #{$accent-color};
+  --background-activated: #2d945f;
+  --background-hover: #2fa168;
+  --color: #{$text-main};
+  --color-activated: #{$text-main};
+  --color-focused: #{$text-main};
+  --color-hover: #{$text-main};
+  --border-radius: 12px;
+
+  text-transform: none;
+  font-weight: 700;
+  font-size: 0.98rem;
+}

@@ -26,8 +26,6 @@ export class ListDetailPage implements OnInit {
   peliculas: any[] = [];
   peliculasFiltradas: any[] = [];
 
-  private testUserId = '4beac43a-2c09-4a20-9fdd-f6540b8c8e4d';
-
   constructor(
     private route: ActivatedRoute,
     private listItemService: ListItemService,
@@ -48,7 +46,7 @@ export class ListDetailPage implements OnInit {
   }
 
   cargarDatosDeLaLista() {
-    this.listsService.getListsByUser(this.testUserId).subscribe({
+    this.listsService.getMyLists().subscribe({
       next: (listas: TraiviuList[]) => {
         const listaActual = listas.find((lista) => lista.id === this.listId);
 

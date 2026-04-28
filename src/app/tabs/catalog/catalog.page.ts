@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { TmdbService } from '../../services/tmdb';
 import { MediaDetailPage } from '../../pages/media-detail/media-detail.page';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-catalog',
@@ -20,12 +23,22 @@ export class CatalogPage implements OnInit {
   loadingReleases = true;
   loadingMustWatch = true;
 
+  profileImageUrl: string | null = null;
+
+  private avatarSub?: Subscription;
+
   constructor(
     private tmdbService: TmdbService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private router: Router,
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
+    this.avatarSub = this.authService.avatar$.subscribe((avatar) => {
+      this.profileImageUrl = avatar;
+    });
+
     this.loadTrending();
     this.loadReleases();
     this.loadMustWatch();
@@ -41,7 +54,10 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(0, 4),
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: item.media_type || (item.title ? 'movie' : 'tv'),
           }));
@@ -64,7 +80,10 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(0, 4),
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: 'movie',
           }));
@@ -87,7 +106,10 @@ export class CatalogPage implements OnInit {
           .map((item: any) => ({
             id: item.id,
             title: item.title || item.name || 'Sin título',
-            year: (item.release_date || item.first_air_date || '').substring(0, 4),
+            year: (item.release_date || item.first_air_date || '').substring(
+              0,
+              4,
+            ),
             posterUrl: this.tmdbService.getPosterUrl(item.poster_path),
             mediaType: 'movie',
           }));
@@ -98,6 +120,14 @@ export class CatalogPage implements OnInit {
         this.loadingMustWatch = false;
       },
     });
+  }
+
+  ngOnDestroy() {
+    this.avatarSub?.unsubscribe();
+  }
+
+  goToSettings() {
+    this.router.navigateByUrl('/tabs/settings');
   }
 
   scrollRow(container: HTMLElement, direction: 'left' | 'right') {
@@ -121,5 +151,9 @@ export class CatalogPage implements OnInit {
     });
 
     await modal.present();
+  }
+
+  goToHome() {
+    this.router.navigateByUrl('/tabs/catalog');
   }
 }

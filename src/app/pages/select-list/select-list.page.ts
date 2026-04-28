@@ -17,8 +17,6 @@ export class SelectListPage implements OnInit {
   listas: TraiviuList[] = [];
   loading = true;
 
-  private testUserId = '4beac43a-2c09-4a20-9fdd-f6540b8c8e4d';
-
   constructor(
     private modalController: ModalController,
     private listsService: ListsService,
@@ -33,12 +31,12 @@ export class SelectListPage implements OnInit {
   cargarListas() {
     this.loading = true;
 
-    this.listsService.getListsByUser(this.testUserId).subscribe({
-      next: (listas) => {
+    this.listsService.getMyLists().subscribe({
+      next: (listas: TraiviuList[]) => {
         this.listas = listas || [];
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al cargar listas', err);
         this.loading = false;
       },
@@ -65,7 +63,7 @@ export class SelectListPage implements OnInit {
         await toast.present();
         this.modalController.dismiss({ added: true });
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al añadir a la lista', err);
       },
     });

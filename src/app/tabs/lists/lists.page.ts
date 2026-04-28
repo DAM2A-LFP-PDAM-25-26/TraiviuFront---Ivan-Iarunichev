@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonicModule,
@@ -7,6 +7,8 @@ import {
 } from '@ionic/angular';
 import { ListsService, TraiviuList } from '../../core/api/lists';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-lists',
@@ -15,11 +17,12 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, IonicModule],
 })
-export class ListsPage implements OnInit {
+export class ListsPage implements OnInit, OnDestroy {
   public lists: TraiviuList[] = [];
   public isLoading = true;
+  public profileImageUrl: string | null = null;
 
-  private testUserId = '4beac43a-2c09-4a20-9fdd-f6540b8c8e4d';
+  private avatarSub?: Subscription;
 
   constructor(
     private listsService: ListsService,
@@ -27,15 +30,25 @@ export class ListsPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.avatarSub = this.authService.avatar$.subscribe((avatar) => {
+      this.profileImageUrl = avatar;
+    });
+
     this.loadLists();
+  }
+
+  ngOnDestroy() {
+    this.avatarSub?.unsubscribe();
   }
 
   loadLists() {
     this.isLoading = true;
-    this.listsService.getListsByUser(this.testUserId).subscribe({
+
+    this.listsService.getMyLists().subscribe({
       next: (data: TraiviuList[]) => {
         this.lists = data;
         this.isLoading = false;
@@ -86,8 +99,8 @@ export class ListsPage implements OnInit {
   private createNewList(name: string) {
     this.isLoading = true;
 
-    this.listsService.createList(this.testUserId, name, 'CUSTOM').subscribe({
-      next: (newList: any) => {
+    this.listsService.createList(name, 'CUSTOM').subscribe({
+      next: (newList: TraiviuList) => {
         console.log('¡Lista creada en el backend!', newList);
         this.isLoading = false;
         this.loadLists();
@@ -116,7 +129,6 @@ export class ListsPage implements OnInit {
           text: 'Cambiar nombre',
           icon: 'pencil-outline',
           handler: () => {
-            console.log('Cambiar nombre clicked');
             this.presentEditListAlert(list);
           },
         },
@@ -125,7 +137,6 @@ export class ListsPage implements OnInit {
           icon: 'trash-outline',
           role: 'destructive',
           handler: () => {
-            console.log('Eliminar lista clicked');
             this.presentDeleteListAlert(list);
           },
         },
@@ -239,5 +250,13 @@ export class ListsPage implements OnInit {
         this.loadLists();
       },
     });
+  }
+
+  goToSettings() {
+    this.router.navigateByUrl('/tabs/settings');
+  }
+
+  goToHome() {
+    this.router.navigateByUrl('/tabs/catalog');
   }
 }
