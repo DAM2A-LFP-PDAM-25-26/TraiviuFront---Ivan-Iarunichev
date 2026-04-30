@@ -58,50 +58,74 @@ export class EditProfilePage implements OnInit {
     reader.onload = () => {
       const result = reader.result as string;
       this.previewImageUrl = result;
-      this.authService.setAvatar(result);
     };
     reader.readAsDataURL(file);
+
+    this.authService.uploadAvatar(file).subscribe({
+      next: () => {
+        // authService ya hace setAvatar y actualiza el user internamente
+      },
+      error: (err) => {
+        console.error('Error subiendo avatar', err);
+      },
+    });
   }
 
   clearAvatar() {
     this.previewImageUrl = null;
-    this.authService.setAvatar(null);
+
+    this.authService.removeAvatarBackend().subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error('Error eliminando avatar', err);
+      },
+    });
   }
 
   async save() {
-    if (this.profileForm.invalid || !this.currentUser) {
+    if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       return;
     }
 
-    const updated: AuthResponse = {
-      ...this.currentUser,
-      displayName: this.profileForm.value.displayName,
-      email: this.profileForm.value.email,
-    };
+    const displayName = this.profileForm.value.displayName;
+    const email = this.profileForm.value.email;
 
-    this.authService.setUser(updated);
+    this.authService.updateMe(displayName, email).subscribe({
+      next: async () => {
+        const alert = await this.alertController.create({
+          header: 'Perfil actualizado',
+          message: 'Tus datos se han guardado correctamente.',
+          cssClass: 'custom-success-alert',
+          buttons: [
+            {
+              text: 'OK',
+              cssClass: 'success-alert-btn',
+            },
+          ],
+        });
 
-    const alert = await this.alertController.create({
-      header: 'Perfil actualizado',
-      message: 'Tus datos se han guardado correctamente.',
-      cssClass: 'custom-success-alert',
-      buttons: [
-        {
-          text: 'OK',
-          cssClass: 'success-alert-btn',
-        },
-      ],
+        await alert.present();
+        this.router.navigateByUrl('/tabs/settings');
+      },
+      error: async (err) => {
+        console.error('Error actualizando perfil', err);
+
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: err?.error?.message || 'No se pudo actualizar el perfil.',
+          buttons: ['OK'],
+        });
+
+        await alert.present();
+      },
     });
-
-    await alert.present();
-
-    this.router.navigateByUrl('/tabs/settings');
   }
 
   goBack() {
     this.router.navigateByUrl('/tabs/settings');
   }
+
   goToHome() {
     this.router.navigateByUrl('/tabs/catalog');
   }

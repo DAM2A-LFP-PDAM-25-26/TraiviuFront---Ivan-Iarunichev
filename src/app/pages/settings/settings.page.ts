@@ -23,6 +23,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   private userSub?: Subscription;
   private avatarSub?: Subscription;
+  private clanNotificationsSub?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -40,21 +41,22 @@ export class SettingsPage implements OnInit, OnDestroy {
       this.profileImageUrl = avatar || this.defaultProfileImage;
     });
 
+    this.clanNotificationsSub =
+      this.authService.clanNotificationsEnabled$.subscribe((enabled) => {
+        this.clanNotificationsEnabled = enabled;
+      });
+
     this.loadPreferences();
   }
 
   ngOnDestroy() {
     this.userSub?.unsubscribe();
     this.avatarSub?.unsubscribe();
+    this.clanNotificationsSub?.unsubscribe();
   }
 
   loadPreferences() {
-    const clan = localStorage.getItem('pref_clan_notifications');
     const sound = localStorage.getItem('pref_sound_enabled');
-
-    if (clan !== null) {
-      this.clanNotificationsEnabled = clan === 'true';
-    }
 
     if (sound !== null) {
       this.soundEnabled = sound === 'true';
@@ -62,15 +64,13 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   toggleClanNotifications(event: CustomEvent) {
-    this.clanNotificationsEnabled = event.detail.checked;
-    localStorage.setItem(
-      'pref_clan_notifications',
-      String(this.clanNotificationsEnabled),
-    );
+    const enabled = !!event.detail.checked;
+    this.authService.setClanNotificationsEnabled(enabled);
+    this.clanNotificationsEnabled = enabled;
   }
 
   toggleSound(event: CustomEvent) {
-    this.soundEnabled = event.detail.checked;
+    this.soundEnabled = !!event.detail.checked;
     localStorage.setItem('pref_sound_enabled', String(this.soundEnabled));
   }
 

@@ -1,0 +1,30 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Selecciona un clan</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+    <div *ngIf="loading" class="loading-state">
+      Cargando clanes...
+    </div>
+
+    <div *ngIf="!loading && clanes.length === 0" class="empty-state">
+      No perteneces a ningún clan.
+    </div>
+
+    <div class="clans-wrapper" *ngIf="!loading && clanes.length > 0">
+      <button
+        class="clan-item-btn"
+        *ngFor="let clan of clanes"
+        (click)="seleccionarClan(clan)"
+      >
+        {{ clan.name }}
+      </button>
+    </div>
+  </div>
+</ion-content>

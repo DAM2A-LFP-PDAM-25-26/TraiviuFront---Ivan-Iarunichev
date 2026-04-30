@@ -1,13 +1,106 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>clans</ion-title>
+    <ion-title>
+      <button class="brand-button" type="button" (click)="goToHome()">
+        <div class="brand-container">
+          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <span class="brand-text">raiviu</span>
+        </div>
+      </button>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="profile-btn" (click)="goToSettings()">
+        <ng-container *ngIf="profileImageUrl; else defaultProfileIcon">
+          <div class="profile-avatar-mini">
+            <img [src]="profileImageUrl" alt="Avatar de perfil" />
+          </div>
+        </ng-container>
+
+        <ng-template #defaultProfileIcon>
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ng-template>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">clans</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="main-container">
+    <div class="page-header">
+      <h1 class="page-title">Mis clanes</h1>
+    </div>
+
+    <div class="create-clan-container">
+      <ion-button expand="block" class="create-btn" fill="solid" (click)="openCreateClanPrompt()">
+        + Crear nuevo clan
+      </ion-button>
+
+      <ion-button expand="block" class="join-btn" fill="outline" (click)="openJoinClanPrompt()">
+        Unirse a un clan por código
+      </ion-button>
+    </div>
+
+    <h3 class="section-title">Clanes recientes</h3>
+    <div class="title-divider"></div>
+
+    <div *ngIf="loading" class="ion-text-center loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando clanes...</p>
+    </div>
+
+    <div *ngIf="!loading && filteredClans.length === 0" class="empty-state">
+      <p>Aún no perteneces a ningún clan.</p>
+      <p>Crea uno nuevo o únete mediante un código de invitación.</p>
+    </div>
+
+    <div class="lists-wrapper" *ngIf="!loading && filteredClans.length > 0">
+      <div class="custom-list-item" *ngFor="let clan of filteredClans; trackBy: trackByClanId">
+
+        <div class="list-clickable-area" (click)="goToClanDetails(clan)">
+          <div class="icon-container">
+            <div class="clan-initial">
+              {{ clan.name.charAt(0).toUpperCase() || 'C' }}
+            </div>
+          </div>
+
+          <div class="list-name-container">
+            <span class="list-name">{{ clan.name }}</span>
+            <span class="list-subtitle">
+              {{ clan.description || 'Sin descripción' }}
+            </span>
+            <span class="list-subtitle">
+              Código: {{ clan.inviteCode || '—' }} ·
+              Miembros: {{ clan.membersCount ?? 0 }}
+            </span>
+          </div>
+        </div>
+
+        <div class="options-container" [id]="'trigger-clan-' + clan.id" (click)="$event.stopPropagation()">
+          <ion-icon src="assets/icon/more.svg"></ion-icon>
+        </div>
+
+        <ion-popover [trigger]="'trigger-clan-' + clan.id" triggerAction="click" alignment="end" side="bottom"
+          dismissOnSelect="true" class="custom-popover">
+          <ng-template>
+            <ion-content class="popover-content-bg">
+              <ion-list class="popover-list">
+                <ion-item button lines="none">
+                  <ion-icon name="eye-outline" slot="start" class="popover-icon">
+                  </ion-icon>
+                  <ion-label>Ver clan</ion-label>
+                </ion-item>
+
+                <ion-item button (click)="confirmLeaveClan(clan)" lines="none" class="delete-item">
+                  <ion-icon name="log-out-outline" slot="start" class="popover-icon-danger">
+                  </ion-icon>
+                  <ion-label color="danger">Salir del clan</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -145,6 +145,7 @@ export class CatalogPage implements OnInit {
       componentProps: {
         tmdbId: item.id,
         mediaType: item.mediaType || 'movie',
+        // aquí NO hay clanId
       },
       cssClass: 'media-detail-modal',
       presentingElement: await this.modalController.getTop(),

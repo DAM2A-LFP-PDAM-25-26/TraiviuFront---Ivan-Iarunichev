@@ -22,7 +22,7 @@ export const routes: Routes = [
         path: 'lists/:id',
         loadComponent: () =>
           import('../pages/list-detail/list-detail.page').then(
-            (m) => m.ListDetailPage
+            (m) => m.ListDetailPage,
           ),
       },
       {
@@ -31,24 +31,29 @@ export const routes: Routes = [
           import('../tabs/clans/clans.page').then((m) => m.ClansPage),
       },
       {
+        path: 'clans/:clanId',
+        loadComponent: () =>
+          import('../pages/clan-detail/clan-detail.page').then(
+            (m) => m.ClanDetailPage,
+          ),
+      },
+      {
         path: 'search-movies/:id',
         loadComponent: () =>
           import('../pages/search-movies/search-movies.page').then(
-            (m) => m.SearchMoviesPage
+            (m) => m.SearchMoviesPage,
           ),
       },
       {
         path: 'settings',
         loadComponent: () =>
-          import('../pages/settings/settings.page').then(
-            (m) => m.SettingsPage
-          ),
+          import('../pages/settings/settings.page').then((m) => m.SettingsPage),
       },
       {
         path: 'edit-profile',
         loadComponent: () =>
           import('../pages/edit-profile/edit-profile.page').then(
-            (m) => m.EditProfilePage
+            (m) => m.EditProfilePage,
           ),
       },
       {

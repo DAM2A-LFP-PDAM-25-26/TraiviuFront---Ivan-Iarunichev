@@ -46,4 +46,12 @@ export const routes: Routes = [
     path: 'edit-profile',
     loadComponent: () => import('./pages/edit-profile/edit-profile.page').then( m => m.EditProfilePage)
   },
+  {
+    path: 'clan-detail',
+    loadComponent: () => import('./pages/clan-detail/clan-detail.page').then( m => m.ClanDetailPage)
+  },
+  {
+    path: 'select-clan',
+    loadComponent: () => import('./pages/select-clan/select-clan.page').then( m => m.SelectClanPage)
+  },
 ];

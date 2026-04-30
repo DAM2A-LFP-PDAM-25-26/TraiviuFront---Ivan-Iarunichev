@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { TmdbService } from '../../services/tmdb';
 import { SafeUrlPipe } from '../../pipes/safe-url-pipe';
 import { SelectListPage } from '../select-list/select-list.page';
+import { ClansService } from '../../services/clan';
+import { SelectClanPage } from '../select-clan/select-clan.page';
 
 @Component({
   selector: 'app-media-detail',
@@ -16,24 +18,38 @@ import { SelectListPage } from '../select-list/select-list.page';
 export class MediaDetailPage implements OnInit {
   @Input() tmdbId!: number;
   @Input() mediaType: 'movie' | 'tv' = 'movie';
+  @Input() clanId: string | null = null;
 
   loading = true;
+  canRecommendToClan = false;
   detail: any = null;
   trailerUrl: string | null = null;
-
   estadoUsuario: string = 'pendiente';
+  trailerKey: string | null = null;
 
   constructor(
     private modalController: ModalController,
     private tmdbService: TmdbService,
+    private clanService: ClansService,
+    private toastController: ToastController,
   ) {}
 
   ngOnInit() {
+    console.log('MediaDetailPage tmdbId:', this.tmdbId);
+    console.log('MediaDetailPage mediaType:', this.mediaType);
+    console.log('MediaDetailPage clanId:', this.clanId);
+
+    this.canRecommendToClan = !!this.clanId && this.clanId.trim().length > 0;
+
     this.cargarDetalle();
   }
 
   cargarDetalle() {
     this.loading = true;
+
+    console.log('MediaDetailPage tmdbId:', this.tmdbId);
+    console.log('MediaDetailPage mediaType:', this.mediaType);
+    console.log('MediaDetailPage clanId:', this.clanId);
 
     const request =
       this.mediaType === 'tv'
@@ -42,6 +58,7 @@ export class MediaDetailPage implements OnInit {
 
     request.subscribe({
       next: (resp: any) => {
+        console.log('MediaDetailPage detalle cargado:', resp);
         this.detail = resp;
         this.loading = false;
         this.cargarTrailer();
@@ -52,8 +69,6 @@ export class MediaDetailPage implements OnInit {
       },
     });
   }
-
-  trailerKey: string | null = null;
 
   cargarTrailer() {
     const request =
@@ -155,8 +170,65 @@ export class MediaDetailPage implements OnInit {
     await modal.present();
   }
 
-  recomendarAlClan() {
-    console.log('Recomendar al clan');
+  async recomendarAlClan() {
+    if (!this.canRecommendToClan || !this.clanId) {
+      console.warn('No hay clanId definido para recomendar');
+      return;
+    }
+
+    const payload = {
+      externalApiId: this.tmdbId.toString(),
+      title: this.getTitle(),
+      year: this.getYear(),
+      posterUrl: this.getPoster(this.detail?.poster_path),
+      mediaType: this.mediaType,
+    };
+
+    this.clanService.recommendToClan(this.clanId, payload).subscribe({
+      next: async () => {
+        const toast = await this.toastController.create({
+          message: 'Recomendación enviada al clan',
+          duration: 1800,
+          color: 'success',
+        });
+        await toast.present();
+        this.cerrar();
+      },
+      error: async (err) => {
+        console.error('Error recomendando al clan', err);
+        const toast = await this.toastController.create({
+          message: 'No se pudo recomendar al clan',
+          duration: 1800,
+          color: 'danger',
+        });
+        await toast.present();
+      },
+    });
+  }
+
+  async recomendar() {
+    if (this.clanId) {
+      this.recomendarAlClan();
+      return;
+    }
+
+    const mediaData = {
+      externalApiId: this.tmdbId.toString(),
+      title: this.getTitle(),
+      year: this.getYear(),
+      posterUrl: this.getPoster(this.detail?.poster_path),
+      mediaType: this.mediaType,
+    };
+
+    const modal = await this.modalController.create({
+      component: SelectClanPage,
+      componentProps: {
+        mediaData,
+      },
+      cssClass: 'select-list-modal',
+    });
+
+    await modal.present();
   }
 
   abrirTrailer() {

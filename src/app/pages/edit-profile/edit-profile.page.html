@@ -38,22 +38,8 @@
         </div>
       </div>
 
-      <input
-        #fileInput
-        id="avatarInput"
-        type="file"
-        accept="image/*"
-        hidden
-        (change)="onAvatarSelected($event)"
-      />
-
-      <ion-button
-        *ngIf="previewImageUrl"
-        expand="block"
-        class="remove-avatar-btn"
-        fill="clear"
-        (click)="clearAvatar()"
-      >
+      <input #fileInput id="avatarInput" type="file" accept="image/*" hidden (change)="onAvatarSelected($event)" />
+      <ion-button *ngIf="previewImageUrl" expand="block" class="remove-avatar-btn" fill="clear" (click)="clearAvatar()">
         Quitar foto de perfil
       </ion-button>
     </div>
@@ -66,11 +52,7 @@
         <div class="field-group">
           <label class="field-label">Nombre de usuario</label>
           <ion-item lines="none" class="custom-input-item">
-            <ion-input
-              formControlName="displayName"
-              type="text"
-              placeholder="Tu nombre"
-            ></ion-input>
+            <ion-input formControlName="displayName" type="text" placeholder="Tu nombre"></ion-input>
           </ion-item>
           <div class="field-error" *ngIf="displayName?.touched && displayName?.invalid">
             Introduce un nombre válido.
@@ -80,11 +62,7 @@
         <div class="field-group">
           <label class="field-label">Correo electrónico</label>
           <ion-item lines="none" class="custom-input-item">
-            <ion-input
-              formControlName="email"
-              type="email"
-              placeholder="tuemail@gmail.com"
-            ></ion-input>
+            <ion-input formControlName="email" type="email" placeholder="tuemail@gmail.com"></ion-input>
           </ion-item>
           <div class="field-error" *ngIf="email?.touched && email?.invalid">
             Introduce un correo válido.
@@ -94,13 +72,7 @@
     </div>
 
     <div class="logout-container">
-      <ion-button
-        expand="block"
-        class="save-btn"
-        fill="solid"
-        [disabled]="profileForm.invalid"
-        (click)="save()"
-      >
+      <ion-button expand="block" class="save-btn" fill="solid" [disabled]="profileForm.invalid" (click)="save()">
         Guardar cambios
       </ion-button>
     </div>

@@ -1,0 +1,208 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <button class="brand-button" type="button" (click)="goToHome()">
+        <div class="brand-container">
+          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <span class="brand-text">raiviu</span>
+        </div>
+      </button>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="profile-btn" (click)="goToSettings()">
+        <ng-container *ngIf="profileImageUrl; else defaultProfileIcon">
+          <div class="profile-avatar-mini">
+            <img [src]="profileImageUrl" alt="Avatar de perfil" />
+          </div>
+        </ng-container>
+
+        <ng-template #defaultProfileIcon>
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ng-template>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="main-container">
+    <div class="clan-title-row" *ngIf="clan as c">
+      <button class="custom-back-btn" (click)="goBackToClans()">
+        <img src="assets/icon/arrow-back.svg" alt="Atrás" />
+      </button>
+
+      <div class="page-header">
+        <div class="clan-header-main">
+          <div class="clan-icon">
+            {{ c.name.charAt(0).toUpperCase() || 'C' }}
+          </div>
+
+          <div class="clan-header-text">
+            <span class="clan-label">Resumen del clan</span>
+            <h1 class="page-title">{{ c.name }}</h1>
+            <p class="clan-subtitle">Miembros: {{ c.membersCount ?? 0 }}</p>
+          </div>
+        </div>
+
+        <button class="list-options-btn" type="button" (click)="openClanMenu($event)">
+          <img src="assets/icon/more.svg" alt="Opciones" class="list-options-img" />
+        </button>
+
+        <ion-popover [isOpen]="clanMenuOpen" [event]="clanMenuEvent" (didDismiss)="closeClanMenu()" alignment="end"
+          side="bottom" dismissOnSelect="true" class="custom-popover">
+          <ng-template>
+            <ion-content class="popover-content-bg">
+              <ion-list class="popover-list">
+                <ion-item button lines="none" (click)="toggleClanNotifications()">
+                  <ion-icon [name]="clanNotificationsEnabled ? 'notifications-outline' : 'notifications-off-outline'"
+                    slot="start" class="popover-icon">
+                  </ion-icon>
+                  <ion-label>
+                    {{ clanNotificationsEnabled ? 'Desactivar notificaciones' : 'Activar notificaciones' }}
+                  </ion-label>
+                </ion-item>
+
+                <ion-item button lines="none" class="delete-item" (click)="leaveClan()">
+                  <ion-icon name="exit-outline" slot="start" class="popover-icon-danger"></ion-icon>
+                  <ion-label color="danger">Salir del clan</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </div>
+    </div>
+
+    <div class="tabs-container">
+      <button class="tab-btn" [class.active]="activeTab === 'feed'" (click)="setTab('feed')">
+        FEED
+      </button>
+
+      <button class="tab-btn" [class.active]="activeTab === 'chat'" (click)="setTab('chat')">
+        CHAT
+      </button>
+    </div>
+
+    <section *ngIf="activeTab === 'feed'">
+      <h3 class="section-title">Actividad reciente</h3>
+      <div class="title-divider"></div>
+
+      <div *ngIf="loadingFeed" class="ion-text-center loading-state">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando actividad...</p>
+      </div>
+
+      <div *ngIf="!loadingFeed && feedItems.length === 0" class="empty-state">
+        <p>Todavía no hay actividad en este clan.</p>
+      </div>
+
+      <div class="feed-list" *ngIf="!loadingFeed && feedItems.length > 0">
+        <article class="feed-item" *ngFor="let item of feedItems; trackBy: trackByFeedId"
+          (click)="abrirDetalleMedia(item)">
+          <div class="feed-left">
+            <div class="feed-avatar-img" *ngIf="getFeedAvatarUrl(item) as avatarUrl; else defaultFeedAvatar">
+              <img [src]="avatarUrl" [alt]="item.userDisplayName" (error)="item.userProfileImageUrl = null" />
+            </div>
+
+            <ng-template #defaultFeedAvatar>
+              <div class="feed-avatar">
+                {{ item.userDisplayName?.charAt(0)?.toUpperCase() || 'U' }}
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="feed-content">
+            <p class="feed-text">
+              <strong>{{ item.userDisplayName }}</strong>
+              <ng-container [ngSwitch]="item.action">
+                <ng-container *ngSwitchCase="'JOINED'"> se ha unido al clan.</ng-container>
+                <ng-container *ngSwitchCase="'LEFT'"> ha salido del clan.</ng-container>
+                <ng-container *ngSwitchCase="'RECOMMENDED'"> ha recomendado:</ng-container>
+                <ng-container *ngSwitchCase="'ADDED_TO_LIST'"> ha añadido a una lista:</ng-container>
+                <ng-container *ngSwitchCase="'WATCHED'"> ha visto:</ng-container>
+                <ng-container *ngSwitchCase="'RATED'"> ha valorado:</ng-container>
+                <ng-container *ngSwitchDefault> ha hecho una actividad.</ng-container>
+              </ng-container>
+            </p>
+
+            <div class="feed-media" *ngIf="item.action !== 'JOINED' && item.action !== 'LEFT'">
+              <div class="feed-poster" *ngIf="item.posterUrl">
+                <img [src]="item.posterUrl" [alt]="item.title" />
+              </div>
+
+              <div class="feed-info">
+                <span class="feed-title">
+                  {{ item.title }}
+                  <span *ngIf="item.year">({{ item.year }})</span>
+                </span>
+
+                <span class="feed-list-name" *ngIf="item.listName">
+                  Lista: {{ item.listName }}
+                </span>
+
+                <div class="feed-rating" *ngIf="item.rating != null && item.rating > 0">
+                  <ion-icon *ngFor="let star of [1, 2, 3, 4, 5]"
+                    [name]="star <= (item.rating || 0) ? 'star' : 'star-outline'">
+                  </ion-icon>
+                </div>
+              </div>
+            </div>
+
+            <div class="feed-system-event" *ngIf="item.action === 'JOINED' || item.action === 'LEFT'">
+              {{ item.title }}
+            </div>
+
+            <span class="feed-date">
+              {{ item.createdAt | date:'short' }}
+            </span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section *ngIf="activeTab === 'chat'">
+      <h3 class="section-title">Chat del clan</h3>
+      <div class="title-divider"></div>
+
+      <div *ngIf="loadingChat" class="ion-text-center loading-state">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando mensajes...</p>
+      </div>
+
+      <div class="chat-list" *ngIf="!loadingChat && messages.length > 0">
+        <div class="chat-message" *ngFor="let msg of messages; trackBy: trackByMessageId">
+          <div class="chat-avatar">
+            {{ msg.displayName.charAt(0).toUpperCase() || 'U' }}
+          </div>
+
+          <div class="chat-bubble">
+            <div class="chat-header">
+              <span class="chat-user">{{ msg.displayName }}</span>
+              <span class="chat-date">
+                {{ msg.createdAt | date:'shortTime' }}
+              </span>
+            </div>
+
+            <p class="chat-text">
+              {{ msg.content }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loadingChat && messages.length === 0" class="empty-state">
+        <p>Nadie ha escrito todavía. ¡Sé el primero en saludar!</p>
+      </div>
+
+      <div class="chat-input-row">
+        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." class="chat-input">
+        </ion-input>
+
+        <ion-button class="chat-send-btn" fill="solid" (click)="sendMessage()">
+          <ion-icon name="send-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </section>
+  </div>
+</ion-content>
