@@ -45,7 +45,8 @@ export class ClanDetailPage implements OnInit, OnDestroy {
 
   private avatarSub?: Subscription;
   private clanNotificationsSub?: Subscription;
-  private readonly backendBaseUrl = 'http://localhost:8085';
+  private chatPollIntervalId: any;
+  private readonly backendBaseUrl = 'http://192.168.1.34:8085';
 
   constructor(
     private route: ActivatedRoute,
@@ -69,7 +70,6 @@ export class ClanDetailPage implements OnInit, OnDestroy {
       });
 
     this.clanId = this.route.snapshot.paramMap.get('clanId') ?? '';
-    console.log('ClanDetailPage clanId al iniciar:', this.clanId);
 
     if (!this.clanId) {
       this.router.navigateByUrl('/tabs/clans');
@@ -78,12 +78,22 @@ export class ClanDetailPage implements OnInit, OnDestroy {
 
     this.loadClan();
     this.loadFeed();
-    this.loadChat();
+    this.loadChat(true);
+
+    this.chatPollIntervalId = setInterval(() => {
+      if (this.activeTab === 'chat') {
+        this.loadChat(false);
+      }
+    }, 5000);
   }
 
   ngOnDestroy() {
     this.avatarSub?.unsubscribe();
     this.clanNotificationsSub?.unsubscribe();
+
+    if (this.chatPollIntervalId) {
+      clearInterval(this.chatPollIntervalId);
+    }
   }
 
   loadClan() {
@@ -106,7 +116,6 @@ export class ClanDetailPage implements OnInit, OnDestroy {
     this.loadingFeed = true;
     this.clansService.getClanFeed(this.clanId).subscribe({
       next: (items) => {
-        console.log('FEED ITEMS', items);
         this.feedItems = items || [];
         this.loadingFeed = false;
         event?.target?.complete?.();
@@ -120,11 +129,26 @@ export class ClanDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  loadChat(event?: any) {
-    this.loadingChat = true;
+  loadChat(showLoader = false, event?: any) {
+    if (showLoader) {
+      this.loadingChat = true;
+    }
+
     this.clansService.getClanMessages(this.clanId).subscribe({
       next: (messages) => {
-        this.messages = messages || [];
+        const incoming = messages || [];
+
+        if (incoming.length !== this.messages.length) {
+          this.messages = incoming;
+        } else {
+          const currentLastId = this.messages[this.messages.length - 1]?.id;
+          const incomingLastId = incoming[incoming.length - 1]?.id;
+
+          if (currentLastId !== incomingLastId) {
+            this.messages = incoming;
+          }
+        }
+
         this.loadingChat = false;
         event?.target?.complete?.();
       },
@@ -132,7 +156,10 @@ export class ClanDetailPage implements OnInit, OnDestroy {
         console.error('Error cargando mensajes', err);
         this.loadingChat = false;
         event?.target?.complete?.();
-        await this.presentToast('No se pudieron cargar los mensajes');
+
+        if (showLoader) {
+          await this.presentToast('No se pudieron cargar los mensajes');
+        }
       },
     });
   }
@@ -152,8 +179,27 @@ export class ClanDetailPage implements OnInit, OnDestroy {
     return `${this.backendBaseUrl}/${raw}`;
   }
 
+  getChatAvatarUrl(message: ClanMessage): string | null {
+    const raw = message.avatarUrl?.trim();
+    if (!raw) return null;
+
+    if (raw.startsWith('http://') || raw.startsWith('https://')) {
+      return raw;
+    }
+
+    if (raw.startsWith('/')) {
+      return `${this.backendBaseUrl}${raw}`;
+    }
+
+    return `${this.backendBaseUrl}/${raw}`;
+  }
+
   setTab(tab: 'feed' | 'chat') {
     this.activeTab = tab;
+
+    if (tab === 'chat') {
+      this.loadChat(false);
+    }
   }
 
   async toggleClanNotifications() {
@@ -176,24 +222,16 @@ export class ClanDetailPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.loadingController
-      .create({ message: 'Enviando mensaje...' })
-      .then((loading) => {
-        loading.present();
-
-        this.clansService.sendMessage(this.clanId, content).subscribe({
-          next: async (msg) => {
-            await loading.dismiss();
-            this.newMessage = '';
-            this.messages = [...this.messages, msg];
-          },
-          error: async (err) => {
-            console.error('Error enviando mensaje', err);
-            await loading.dismiss();
-            await this.presentToast('No se pudo enviar el mensaje');
-          },
-        });
-      });
+    this.clansService.sendMessage(this.clanId, content).subscribe({
+      next: (msg) => {
+        this.newMessage = '';
+        this.messages = [...this.messages, msg];
+      },
+      error: async (err) => {
+        console.error('Error enviando mensaje', err);
+        await this.presentToast('No se pudo enviar el mensaje');
+      },
+    });
   }
 
   goBackToClans() {
@@ -279,7 +317,6 @@ export class ClanDetailPage implements OnInit, OnDestroy {
 
   async abrirDetalleMedia(item: any) {
     if (!item?.tmdbId || !item?.mediaType) {
-      console.log('No se abre modal: item sin tmdbId o mediaType', item);
       return;
     }
 

@@ -4,7 +4,13 @@ $accent-color: #34a873;
 $text-main: #f3f4f4;
 $text-muted: #a3a3a3;
 
-ion-content {
+:host {
+  display: block;
+  height: 100%;
+  background: $bg-main;
+}
+
+ion-content.settings-content {
   --background: #{$bg-main};
   --color: #{$text-main};
 }
@@ -13,28 +19,32 @@ ion-toolbar {
   --background: #{$bg-main};
   --color: #{$text-main};
   --border-width: 0;
+  --box-shadow: none;
 
   ion-title {
-    padding: 0;
+    padding: 0 20px;
+    text-align: center;
   }
 }
 
 .brand-container {
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
   justify-content: center;
-  padding: 10px 15px 10px 10px;
+  padding: 10px 0;
   gap: 0;
+  margin: 0 auto;
 }
 
 .brand-button {
   background: transparent;
   border: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .brand-logo-t {
@@ -54,7 +64,7 @@ ion-toolbar {
 }
 
 .main-container {
-  padding: 20px;
+  padding: 20px 20px calc(120px + env(safe-area-inset-bottom, 0px));
 }
 
 .page-header {
@@ -88,7 +98,7 @@ ion-toolbar {
 .card {
   background-color: $bg-main;
   border-radius: 14px;
-  border: 1px solid $accent-color;
+  border: 1px solid rgba($accent-color, 0.7);
   padding: 18px 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
@@ -113,10 +123,11 @@ ion-toolbar {
   align-items: center;
   justify-content: center;
   margin-right: 14px;
-  border: 2px solid $accent-color;
+  border: 1px solid rgba($accent-color, 0.8);
   overflow: hidden;
   padding: 0;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
 
   ion-icon {
     font-size: 2rem;
@@ -136,6 +147,7 @@ ion-toolbar {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .profile-name {
@@ -148,6 +160,7 @@ ion-toolbar {
 .profile-email {
   font-size: 0.92rem;
   color: $text-muted;
+  word-break: break-word;
 }
 
 .edit-btn {
@@ -178,8 +191,10 @@ ion-toolbar {
 .settings-item {
   --background: transparent;
   --color: #{$text-main};
-  padding-left: 0;
-  padding-right: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 
   &:not(:last-child) {
     margin-bottom: 4px;
@@ -239,4 +254,33 @@ ion-toolbar {
   width: 18px;
   height: 18px;
   border-radius: 50%;
+}
+
+@media (max-width: 480px) {
+  .main-container {
+    padding: 18px 14px calc(118px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .page-title {
+    font-size: 1.45rem;
+  }
+
+  .card {
+    padding: 16px 14px;
+  }
+
+  .avatar-circle {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    margin-right: 12px;
+  }
+
+  .profile-name {
+    font-size: 1rem;
+  }
+
+  .profile-email {
+    font-size: 0.88rem;
+  }
 }

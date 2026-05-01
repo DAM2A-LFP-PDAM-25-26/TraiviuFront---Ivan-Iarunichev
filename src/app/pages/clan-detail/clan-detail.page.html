@@ -107,7 +107,7 @@
 
             <ng-template #defaultFeedAvatar>
               <div class="feed-avatar">
-                {{ item.userDisplayName?.charAt(0)?.toUpperCase() || 'U' }}
+                {{ item.userDisplayName.charAt(0).toUpperCase() || 'U' }}
               </div>
             </ng-template>
           </div>
@@ -161,9 +161,11 @@
       </div>
     </section>
 
-    <section *ngIf="activeTab === 'chat'">
-      <h3 class="section-title">Chat del clan</h3>
-      <div class="title-divider"></div>
+    <section *ngIf="activeTab === 'chat'" class="chat-section">
+      <div class="chat-section-header">
+        <h3 class="section-title">Chat del clan</h3>
+        <div class="title-divider"></div>
+      </div>
 
       <div *ngIf="loadingChat" class="ion-text-center loading-state">
         <ion-spinner name="crescent"></ion-spinner>
@@ -172,9 +174,15 @@
 
       <div class="chat-list" *ngIf="!loadingChat && messages.length > 0">
         <div class="chat-message" *ngFor="let msg of messages; trackBy: trackByMessageId">
-          <div class="chat-avatar">
-            {{ msg.displayName.charAt(0).toUpperCase() || 'U' }}
+          <div class="chat-avatar-img" *ngIf="getChatAvatarUrl(msg) as avatarUrl; else defaultChatAvatar">
+            <img [src]="avatarUrl" [alt]="msg.displayName" (error)="msg.avatarUrl = null" />
           </div>
+
+          <ng-template #defaultChatAvatar>
+            <div class="chat-avatar">
+              {{ msg.displayName.charAt(0).toUpperCase() || 'U' }}
+            </div>
+          </ng-template>
 
           <div class="chat-bubble">
             <div class="chat-header">
@@ -191,17 +199,18 @@
         </div>
       </div>
 
-      <div *ngIf="!loadingChat && messages.length === 0" class="empty-state">
+      <div *ngIf="!loadingChat && messages.length === 0" class="empty-state chat-empty-state">
         <p>Nadie ha escrito todavía. ¡Sé el primero en saludar!</p>
       </div>
 
       <div class="chat-input-row">
-        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." class="chat-input">
+        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." class="chat-input" maxlength="1000"
+          clearInput="true" (keyup.enter)="sendMessage()">
         </ion-input>
 
-        <ion-button class="chat-send-btn" fill="solid" (click)="sendMessage()">
-          <ion-icon name="send-outline"></ion-icon>
-        </ion-button>
+        <button type="button" class="chat-send-btn" (click)="sendMessage()" aria-label="Enviar mensaje">
+          <img src="assets/icon/arrow_upward.svg" alt="Enviar" class="chat-send-icon" />
+        </button>
       </div>
     </section>
   </div>

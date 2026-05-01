@@ -19,7 +19,7 @@ import { MediaDetailPage } from '../media-detail/media-detail.page';
 })
 export class ListDetailPage implements OnInit {
   listId: string = '';
-  filtroPeriodo: string = 'mes';
+  filtroPeriodo: string = 'todos';
   textoBusqueda: string = '';
   nombreLista: string = 'Cargando...';
 
@@ -79,6 +79,10 @@ export class ListDetailPage implements OnInit {
   }
 
   aplicarFiltros() {
+    console.log('filtroPeriodo actual:', this.filtroPeriodo);
+    console.log('textoBusqueda actual:', this.textoBusqueda);
+    console.log('peliculas antes de filtrar:', this.peliculas);
+
     let resultado = [...this.peliculas];
 
     if (this.textoBusqueda.trim()) {
@@ -90,6 +94,8 @@ export class ListDetailPage implements OnInit {
     }
 
     resultado = resultado.filter((peli) => this.cumpleFiltroPeriodo(peli));
+
+    console.log('peliculas después de filtrar:', resultado);
 
     this.peliculasFiltradas = resultado;
   }

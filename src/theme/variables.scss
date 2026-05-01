@@ -1,2 +1,56 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+$bg-main: #2c2c2c;
+$accent-color: #34a873;
+$text-main: #f3f4f4;
+$text-muted: #a3a3a3;
+
+:root {
+  --ion-font-family: 'Poppins', sans-serif;
+
+  --ion-background-color: #2c2c2c;
+  --ion-background-color-rgb: 44, 44, 44;
+  --ion-text-color: #f3f4f4;
+  --ion-text-color-rgb: 243, 244, 244;
+
+  --ion-color-primary: #34a873;
+  --ion-color-primary-rgb: 52, 168, 115;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #2d9263;
+  --ion-color-primary-tint: #48b37f;
+
+  --ion-color-dark: #2c2c2c;
+  --ion-color-dark-rgb: 44, 44, 44;
+  --ion-color-dark-contrast: #f3f4f4;
+  --ion-color-dark-contrast-rgb: 243, 244, 244;
+
+  --ion-toolbar-background: #2c2c2c;
+  --ion-toolbar-color: #f3f4f4;
+
+  --ion-tab-bar-background: #2c2c2c;
+  --ion-tab-bar-color: #a3a3a3;
+  --ion-tab-bar-color-selected: #34a873;
+  --ion-tab-bar-border-color: transparent;
+
+  /* Cards / items */
+  --ion-item-background: #2c2c2c;
+  --ion-card-background: #1e3a2f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #2c2c2c;
+    --ion-text-color: #f3f4f4;
+
+    --ion-toolbar-background: #2c2c2c;
+    --ion-toolbar-color: #f3f4f4;
+
+    --ion-tab-bar-background: #2c2c2c;
+    --ion-tab-bar-color: #a3a3a3;
+    --ion-tab-bar-color-selected: #34a873;
+  }
+}
+
+$tabs-bg: $bg-main;
+$tabs-accent: $accent-color;
+$tabs-text: $text-main;
+$tabs-muted: $text-muted;

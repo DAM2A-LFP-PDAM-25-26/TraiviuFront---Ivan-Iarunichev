@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap, timeout, catchError } from 'rxjs/operators';
 
 export interface LoginRequest {
   email: string;
@@ -20,27 +21,27 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8085/api/auth';
-  private readonly userApiUrl = 'http://localhost:8085/api/users';
+  private readonly backendBaseUrl = 'http://192.168.1.34:8085';
+  private readonly apiBaseUrl = `${this.backendBaseUrl}/api`;
+  private readonly authApiUrl = `${this.apiBaseUrl}/auth`;
+  private readonly userApiUrl = `${this.apiBaseUrl}/users`;
+
   private readonly tokenKey = 'auth_token';
   private readonly userKey = 'auth_user';
   private readonly avatarKeyPrefix = 'auth_avatar_';
   private readonly clanNotificationsKey = 'clan_notifications_enabled';
   private readonly defaultAvatar = 'assets/icon/default-avatar.png';
-  private readonly backendBaseUrl = 'http://localhost:8085';
 
-  private userSubject = new BehaviorSubject<AuthResponse | null>(
-    this.getStoredUser(),
-  );
+  private readonly requestTimeoutMs = 10000;
+
+  private userSubject = new BehaviorSubject<AuthResponse | null>(this.getStoredUser());
   user$ = this.userSubject.asObservable();
 
-  private avatarSubject = new BehaviorSubject<string | null>(
-    this.getInitialAvatar(),
-  );
+  private avatarSubject = new BehaviorSubject<string | null>(this.getInitialAvatar());
   avatar$ = this.avatarSubject.asObservable();
 
   private clanNotificationsSubject = new BehaviorSubject<boolean>(
-    this.getInitialClanNotificationsValue(),
+    this.getInitialClanNotificationsValue()
   );
   clanNotificationsEnabled$ = this.clanNotificationsSubject.asObservable();
 
@@ -49,29 +50,143 @@ export class AuthService {
   login(email: string, password: string): Observable<AuthResponse> {
     const body: LoginRequest = { email, password };
 
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, body).pipe(
+    return this.http.post<AuthResponse>(`${this.authApiUrl}/login`, body).pipe(
+      timeout(this.requestTimeoutMs),
       tap((response: AuthResponse) => {
         this.setSession(response);
       }),
+      catchError((error) => this.handleHttpError(error))
     );
   }
 
   register(
     email: string,
     password: string,
-    displayName: string,
+    displayName: string
   ): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/register`, {
+      .post<AuthResponse>(`${this.authApiUrl}/register`, {
         email,
         password,
         displayName,
       })
       .pipe(
+        timeout(this.requestTimeoutMs),
         tap((response: AuthResponse) => {
           this.setSession(response);
         }),
+        catchError((error) => this.handleHttpError(error))
       );
+  }
+
+  uploadAvatar(file: File): Observable<{ avatarUrl: string | null }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken() ?? ''}`,
+    });
+
+    return this.http
+      .post<{ avatarUrl: string | null }>(
+        `${this.userApiUrl}/me/avatar`,
+        formData,
+        { headers }
+      )
+      .pipe(
+        timeout(this.requestTimeoutMs),
+        tap((res) => {
+          const resolvedAvatar = this.resolveAvatarUrl(res.avatarUrl);
+          this.setAvatar(resolvedAvatar);
+
+          const current = this.getCurrentUser();
+          if (current) {
+            const updated: AuthResponse = {
+              ...current,
+              avatarUrl: resolvedAvatar ?? undefined,
+            };
+            this.setUser(updated);
+          }
+        }),
+        catchError((error) => this.handleHttpError(error))
+      );
+  }
+
+  updateMe(displayName: string, email: string): Observable<AuthResponse> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken() ?? ''}`,
+      'Content-Type': 'application/json',
+    });
+
+    return this.http
+      .put<AuthResponse>(
+        `${this.userApiUrl}/me`,
+        { displayName, email },
+        { headers }
+      )
+      .pipe(
+        timeout(this.requestTimeoutMs),
+        tap((response: AuthResponse) => {
+          const currentToken = this.getToken();
+
+          const mergedResponse: AuthResponse = {
+            ...response,
+            token: response.token || currentToken || '',
+            avatarUrl:
+              response.avatarUrl ?? this.getCurrentUser()?.avatarUrl ?? null,
+          };
+
+          this.setSession(mergedResponse);
+        }),
+        catchError((error) => this.handleHttpError(error))
+      );
+  }
+
+  removeAvatarBackend(): Observable<{ avatarUrl: string | null }> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken() ?? ''}`,
+    });
+
+    return this.http
+      .delete<{ avatarUrl: string | null }>(`${this.userApiUrl}/me/avatar`, {
+        headers,
+      })
+      .pipe(
+        timeout(this.requestTimeoutMs),
+        tap(() => {
+          this.setAvatar(null);
+          const current = this.getCurrentUser();
+          if (current) {
+            const updated: AuthResponse = { ...current, avatarUrl: undefined };
+            this.setUser(updated);
+          }
+        }),
+        catchError((error) => this.handleHttpError(error))
+      );
+  }
+
+  private handleHttpError(error: unknown) {
+    if ((error as any)?.name === 'TimeoutError') {
+      return throwError(() => ({
+        error: {
+          message:
+            'La conexión con el servidor tardó demasiado. En Android revisa IP, WiFi y configuración HTTP.',
+        },
+      }));
+    }
+
+    const httpError = error as HttpErrorResponse;
+
+    if (httpError.status === 0) {
+      return throwError(() => ({
+        error: {
+          message:
+            'No se pudo conectar con el servidor. En Android comprueba que el móvil y el PC estén en la misma red y que el backend esté accesible.',
+        },
+      }));
+    }
+
+    return throwError(() => error);
   }
 
   private resolveAvatarUrl(url: string | null | undefined): string | null {
@@ -92,92 +207,12 @@ export class AuthService {
     return `${this.backendBaseUrl}/${trimmed}`;
   }
 
-  uploadAvatar(file: File): Observable<{ avatarUrl: string | null }> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.getToken() ?? ''}`,
-      // NO ponemos Content-Type aquí, lo hace el navegador
-    });
-
-    return this.http
-      .post<{
-        avatarUrl: string | null;
-      }>(`${this.userApiUrl}/me/avatar`, formData, { headers })
-      .pipe(
-        tap((res) => {
-          const resolvedAvatar = this.resolveAvatarUrl(res.avatarUrl);
-          this.setAvatar(resolvedAvatar);
-
-          const current = this.getCurrentUser();
-          if (current) {
-            const updated: AuthResponse = {
-              ...current,
-              avatarUrl: resolvedAvatar ?? undefined,
-            };
-            this.setUser(updated);
-          }
-        }),
-      );
-  }
-
-  updateMe(displayName: string, email: string): Observable<AuthResponse> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.getToken() ?? ''}`,
-      'Content-Type': 'application/json',
-    });
-
-    return this.http
-      .put<AuthResponse>(
-        `${this.userApiUrl}/me`,
-        { displayName, email },
-        { headers },
-      )
-      .pipe(
-        tap((response: AuthResponse) => {
-          const currentToken = this.getToken();
-
-          const mergedResponse: AuthResponse = {
-            ...response,
-            token: response.token || currentToken || '',
-            avatarUrl:
-              response.avatarUrl ?? this.getCurrentUser()?.avatarUrl ?? null,
-          };
-
-          this.setSession(mergedResponse);
-        }),
-      );
-  }
-
-  removeAvatarBackend(): Observable<{ avatarUrl: string | null }> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.getToken() ?? ''}`,
-    });
-
-    return this.http
-      .delete<{
-        avatarUrl: string | null;
-      }>(`${this.userApiUrl}/me/avatar`, { headers })
-      .pipe(
-        tap(() => {
-          this.setAvatar(null);
-          const current = this.getCurrentUser();
-          if (current) {
-            const updated: AuthResponse = { ...current, avatarUrl: undefined };
-            this.setUser(updated);
-          }
-        }),
-      );
-  }
-
   private setSession(auth: AuthResponse): void {
     this.setToken(auth.token);
     this.setUser(auth);
 
     const avatarFromBackend = this.resolveAvatarUrl(auth.avatarUrl);
     const storedAvatar = this.getStoredAvatarByUserId(auth.userId);
-
     const finalAvatar = avatarFromBackend || storedAvatar || this.defaultAvatar;
 
     this.avatarSubject.next(finalAvatar);
@@ -268,9 +303,7 @@ export class AuthService {
       return this.defaultAvatar;
     }
 
-    return (
-      this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar
-    );
+    return this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar;
   }
 
   private getStoredAvatarByUserId(userId: string): string | null {
@@ -281,10 +314,7 @@ export class AuthService {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return;
 
-    localStorage.setItem(
-      this.getAvatarKey(currentUser.userId),
-      this.defaultAvatar,
-    );
+    localStorage.setItem(this.getAvatarKey(currentUser.userId), this.defaultAvatar);
     this.avatarSubject.next(this.defaultAvatar);
   }
 

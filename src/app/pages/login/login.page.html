@@ -1,60 +1,40 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-title>
-      <div class="brand-container">
-        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
-        <span class="brand-text">raiviu</span>
-      </div>
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+<ion-content [fullscreen]="true" class="login-content">
   <div class="auth-container">
     <div class="auth-card">
+      <div class="brand-container">
+        <img src="assets/icon/traiviu-logo.png" alt="Traiviu" class="brand-logo-t" />
+        <span class="brand-text">raiviu</span>
+      </div>
+
       <div class="auth-header">
         <h1 class="auth-title">
           {{ mode === 'login' ? 'Bienvenido de nuevo' : 'Crea tu cuenta' }}
         </h1>
         <p class="auth-subtitle">
           {{
-            mode === 'login'
-              ? 'Accede para ver tus listas y organizar tus películas/series.'
-              : 'Regístrate para empezar a guardar y organizar tus listas.'
+          mode === 'login'
+          ? 'Accede para ver tus listas y organizar tus películas/series.'
+          : 'Regístrate para empezar a guardar y organizar tus listas.'
           }}
         </p>
       </div>
 
       <div class="mode-switch">
-        <button
-          type="button"
-          class="mode-btn"
-          [class.active]="mode === 'login'"
-          (click)="setMode('login')"
-        >
+        <button type="button" class="mode-btn" [class.active]="mode === 'login'" (click)="setMode('login')">
           Iniciar sesión
         </button>
 
-        <button
-          type="button"
-          class="mode-btn"
-          [class.active]="mode === 'register'"
-          (click)="setMode('register')"
-        >
+        <button type="button" class="mode-btn" [class.active]="mode === 'register'" (click)="setMode('register')">
           Registrarse
         </button>
       </div>
 
-      <form [formGroup]="authForm" (ngSubmit)="submit()" class="auth-form">
+      <form [formGroup]="authForm" (ngSubmit)="submit()" class="auth-form" novalidate>
         <div class="field-group" *ngIf="mode === 'register'">
           <label class="field-label">Nombre visible</label>
-          <ion-item lines="none" class="custom-input">
-            <ion-input
-              type="text"
-              formControlName="displayName"
-              placeholder="Tu nombre"
-            ></ion-input>
-          </ion-item>
+          <div class="custom-input">
+            <input type="text" formControlName="displayName" placeholder="Tu nombre" class="native-input" />
+          </div>
           <p class="field-error" *ngIf="displayName?.touched && displayName?.invalid">
             Introduce un nombre válido.
           </p>
@@ -62,13 +42,9 @@
 
         <div class="field-group">
           <label class="field-label">Email</label>
-          <ion-item lines="none" class="custom-input">
-            <ion-input
-              type="email"
-              formControlName="email"
-              placeholder="tu@email.com"
-            ></ion-input>
-          </ion-item>
+          <div class="custom-input">
+            <input type="email" formControlName="email" placeholder="tu@email.com" class="native-input" />
+          </div>
           <p class="field-error" *ngIf="email?.touched && email?.invalid">
             Introduce un email válido.
           </p>
@@ -76,26 +52,17 @@
 
         <div class="field-group">
           <label class="field-label">Contraseña</label>
-          <ion-item lines="none" class="custom-input">
-            <ion-input
-              type="password"
-              formControlName="password"
-              placeholder="Tu contraseña"
-            ></ion-input>
-          </ion-item>
+          <div class="custom-input">
+            <input type="password" formControlName="password" placeholder="Tu contraseña" class="native-input" />
+          </div>
           <p class="field-error" *ngIf="password?.touched && password?.invalid">
             La contraseña debe tener al menos 4 caracteres.
           </p>
         </div>
 
-        <ion-button
-          expand="block"
-          class="submit-btn"
-          type="submit"
-          [disabled]="authForm.invalid || isSubmitting"
-        >
-          {{ mode === 'login' ? 'Entrar' : 'Crear cuenta' }}
-        </ion-button>
+        <button type="submit" class="submit-btn" [disabled]="authForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Cargando...' : (mode === 'login' ? 'Entrar' : 'Crear cuenta') }}
+        </button>
       </form>
     </div>
   </div>

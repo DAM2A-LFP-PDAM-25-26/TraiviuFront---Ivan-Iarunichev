@@ -19,29 +19,29 @@ export const routes: Routes = [
           import('../tabs/lists/lists.page').then((m) => m.ListsPage),
       },
       {
-        path: 'lists/:id',
-        loadComponent: () =>
-          import('../pages/list-detail/list-detail.page').then(
-            (m) => m.ListDetailPage,
-          ),
-      },
-      {
         path: 'clans',
         loadComponent: () =>
           import('../tabs/clans/clans.page').then((m) => m.ClansPage),
       },
       {
+        path: 'lists/:id',
+        loadComponent: () =>
+          import('../pages/list-detail/list-detail.page').then(
+            (m) => m.ListDetailPage
+          ),
+      },
+      {
         path: 'clans/:clanId',
         loadComponent: () =>
           import('../pages/clan-detail/clan-detail.page').then(
-            (m) => m.ClanDetailPage,
+            (m) => m.ClanDetailPage
           ),
       },
       {
         path: 'search-movies/:id',
         loadComponent: () =>
           import('../pages/search-movies/search-movies.page').then(
-            (m) => m.SearchMoviesPage,
+            (m) => m.SearchMoviesPage
           ),
       },
       {
@@ -53,12 +53,12 @@ export const routes: Routes = [
         path: 'edit-profile',
         loadComponent: () =>
           import('../pages/edit-profile/edit-profile.page').then(
-            (m) => m.EditProfilePage,
+            (m) => m.EditProfilePage
           ),
       },
       {
         path: '',
-        redirectTo: '/tabs/catalog',
+        redirectTo: 'catalog',
         pathMatch: 'full',
       },
     ],

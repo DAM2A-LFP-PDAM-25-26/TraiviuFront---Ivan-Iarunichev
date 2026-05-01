@@ -4,6 +4,12 @@ $accent-color: #34a873;
 $text-main: #f3f4f4;
 $text-muted: #a3a3a3;
 
+:host {
+  display: block;
+  height: 100%;
+  background: $bg-main;
+}
+
 ion-content {
   --background: #{$bg-main};
   --color: #{$text-main};
@@ -13,9 +19,12 @@ ion-toolbar {
   --background: #{$bg-main};
   --color: #{$text-main};
   --border-width: 0;
+  --box-shadow: none;
+  position: relative;
 
   ion-title {
-    padding: 0;
+    padding: 0 56px;
+    text-align: center;
   }
 }
 
@@ -23,7 +32,10 @@ ion-toolbar {
   --background: transparent;
   --color: #{$text-main};
   --border-radius: 999px;
-  margin-right: 30px;
+  --ripple-color: transparent;
+  margin-right: 18px;
+  position: relative;
+  z-index: 2;
 
   ion-icon {
     font-size: 1.9rem;
@@ -41,11 +53,12 @@ ion-toolbar {
   min-width: 34px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid $accent-color;
+  border: 1px solid rgba($accent-color, 0.55);
   background: rgba(52, 168, 115, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 
   img {
     width: 100%;
@@ -56,22 +69,24 @@ ion-toolbar {
   }
 }
 
-.brand-container {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  padding: 10px 0 10px 80px;
-  gap: 0;
-}
-
 .brand-button {
   background: transparent;
   border: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.brand-container {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  padding: 10px 0;
+  gap: 0;
+  margin: 0 0 0 65px;
 }
 
 .brand-logo-t {
@@ -86,12 +101,11 @@ ion-toolbar {
   font-size: 1.5rem;
   font-weight: 700;
   color: #f3f4f4;
-  color: #F3F4F4;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .main-container {
-  padding: 20px 0 30px 20px;
+  padding: 20px 0 calc(120px + env(safe-area-inset-bottom, 0px)) 20px;
 }
 
 .catalog-section {
@@ -102,13 +116,11 @@ ion-toolbar {
   padding: 15px;
   margin-bottom: 22px;
   width: calc(100% - 20px);
-  background-color: #{$bg-card};
-  border-color: #{$accent-color};
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 8px;
-  color: #{$text-main};
-  box-shadow: 0 4px 10px rgba(97, 45, 83, 0.4);
+  background-color: $bg-card;
+  border: 1px solid rgba($accent-color, 0.65);
+  border-radius: 10px;
+  color: $text-main;
+  box-shadow: 0 4px 10px rgba(97, 45, 83, 0.22);
   align-items: center;
   justify-content: center;
   display: flex;
@@ -130,13 +142,13 @@ ion-toolbar {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 50px;
+  gap: 34px;
   padding-right: 20px;
 }
 
 .horizontal-list {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -144,20 +156,14 @@ ion-toolbar {
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x proximity;
   flex: 1;
+  padding-bottom: 4px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .horizontal-list::-webkit-scrollbar {
-  height: 8px;
-}
-
-.horizontal-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-}
-
-.horizontal-list::-webkit-scrollbar-thumb {
-  background: rgba(52, 168, 115, 0.7);
-  border-radius: 20px;
+  display: none;
 }
 
 .catalog-card {
@@ -166,6 +172,7 @@ ion-toolbar {
   flex: 0 0 auto;
   scroll-snap-align: start;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .catalog-poster {
@@ -173,9 +180,12 @@ ion-toolbar {
   height: 190px;
   object-fit: cover;
   border-radius: 12px;
-  border: 1px solid rgba($accent-color, 0.8);
+  border: 1px solid rgba($accent-color, 0.45);
   background: $bg-card;
   margin-bottom: 8px;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .catalog-info {
@@ -204,7 +214,7 @@ ion-toolbar {
   width: 34px;
   height: 34px;
   min-width: 34px;
-  border: 1px solid rgba($accent-color, 0.85);
+  border: 1px solid rgba($accent-color, 0.6);
   background: $bg-card;
   color: $text-main;
   border-radius: 50%;
@@ -216,6 +226,8 @@ ion-toolbar {
   font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
 }
 
 .scroll-btn:active {
@@ -229,14 +241,29 @@ ion-toolbar {
 
   .slider-wrapper {
     padding-right: 16px;
-  }
-
-  .horizontal-list::-webkit-scrollbar {
-    display: none;
+    gap: 0;
   }
 }
 
 @media (max-width: 480px) {
+  .profile-btn {
+    margin-right: 12px;
+  }
+
+  ion-toolbar {
+    ion-title {
+      padding: 0 48px;
+    }
+  }
+
+  .brand-container {
+    padding: 10px 0;
+  }
+
+  .main-container {
+    padding: 18px 0 calc(118px + env(safe-area-inset-bottom, 0px)) 14px;
+  }
+
   .catalog-card {
     min-width: 118px;
     max-width: 118px;
@@ -248,6 +275,13 @@ ion-toolbar {
   }
 
   .section-header {
+    width: calc(100% - 14px);
     margin-bottom: 18px;
+    padding: 14px;
+  }
+
+  .section-header .section-title {
+    font-size: 1.05rem;
+    margin-left: 10px;
   }
 }
