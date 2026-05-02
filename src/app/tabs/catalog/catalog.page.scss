@@ -34,6 +34,7 @@ ion-toolbar {
   --border-radius: 999px;
   --ripple-color: transparent;
   margin-right: 18px;
+  margin-top: 10px;
   position: relative;
   z-index: 2;
 
@@ -149,7 +150,7 @@ ion-toolbar {
 .horizontal-list {
   display: flex;
   justify-content: flex-start;
-  gap: 14px;
+  gap: 12px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;

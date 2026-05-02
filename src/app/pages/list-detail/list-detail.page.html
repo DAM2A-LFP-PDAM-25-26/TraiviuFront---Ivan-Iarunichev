@@ -1,69 +1,90 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <button class="custom-back-btn" (click)="goBack()">
+        <img src="assets/icon/arrow-back.svg" alt="Atrás" />
+      </button>
+    </ion-buttons>
+
     <ion-title>
       <div class="brand-container">
-        <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+        <img src="assets/icon/traiviu-logo.png" alt="Traiviu" class="brand-logo-t" />
         <span class="brand-text">raiviu</span>
       </div>
     </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="profile-btn" (click)="goToSettings()">
+        <ng-container *ngIf="profileImageUrl; else defaultProfileIcon">
+          <div class="profile-avatar-mini">
+            <img [src]="profileImageUrl" alt="Avatar de perfil" />
+          </div>
+        </ng-container>
+
+        <ng-template #defaultProfileIcon>
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ng-template>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="main-container">
+    <div class="page-header">
+      <h1 class="page-title" [title]="nombreLista">
+        {{ nombreLista }}
+      </h1>
 
-    <div class="list-title-row">
+      <button class="list-options-btn" [id]="'trigger-detalle-' + listId">
+        <img src="assets/icon/more.svg" alt="Opciones" class="list-options-img" />
+      </button>
 
-      <ion-buttons slot="start">
-        <button class="custom-back-btn" (click)="goBack()">
-          <img src="assets/icon/arrow-back.svg" alt="Atrás">
-        </button>
-      </ion-buttons>
+      <ion-popover
+        [trigger]="'trigger-detalle-' + listId"
+        triggerAction="click"
+        alignment="end"
+        side="bottom"
+        dismissOnSelect="true"
+        class="custom-popover"
+      >
+        <ng-template>
+          <ion-content class="popover-content-bg">
+            <ion-list class="popover-list">
+              <ion-item button (click)="abrirBuscadorPeliculas()" lines="none">
+                <ion-icon name="add-outline" slot="start" class="popover-icon"></ion-icon>
+                <ion-label>Añadir películas</ion-label>
+              </ion-item>
 
-      <div class="page-header">
-        <h1 class="page-title">
-          {{ nombreLista }}
-        </h1>
+              <ion-item button (click)="presentEditListAlertDetalle()" lines="none">
+                <ion-icon name="pencil-outline" slot="start" class="popover-icon"></ion-icon>
+                <ion-label>Renombrar lista</ion-label>
+              </ion-item>
 
-        <button class="list-options-btn" [id]="'trigger-detalle-' + listId">
-          <img src="assets/icon/more.svg" alt="Opciones" class="list-options-img" />
-        </button>
-
-        <ion-popover [trigger]="'trigger-detalle-' + listId" triggerAction="click" alignment="end" side="bottom"
-          dismissOnSelect="true" class="custom-popover">
-
-          <ng-template>
-            <ion-content class="popover-content-bg">
-              <ion-list class="popover-list">
-
-                <ion-item button (click)="abrirBuscadorPeliculas()" lines="none">
-                  <ion-icon name="add-outline" slot="start" class="popover-icon"></ion-icon>
-                  <ion-label>Añadir películas</ion-label>
-                </ion-item>
-
-                <ion-item button (click)="presentEditListAlertDetalle()" lines="none">
-                  <ion-icon name="pencil-outline" slot="start" class="popover-icon"></ion-icon>
-                  <ion-label>Renombrar lista</ion-label>
-                </ion-item>
-
-                <ion-item button (click)="deleteListDetalle()" lines="none" class="delete-item">
-                  <ion-icon name="trash-outline" slot="start" class="popover-icon-danger"></ion-icon>
-                  <ion-label color="danger">Eliminar lista</ion-label>
-                </ion-item>
-
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
-
-      </div>
+              <ion-item button (click)="deleteListDetalle()" lines="none" class="delete-item">
+                <ion-icon
+                  name="trash-outline"
+                  slot="start"
+                  class="popover-icon-danger"
+                ></ion-icon>
+                <ion-label color="danger">Eliminar lista</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
     </div>
 
     <div class="filter-row">
       <span class="filter-label">Filtro:</span>
 
-      <ion-select class="filter-select" interface="popover" placeholder="Selecciona" [(ngModel)]="filtroPeriodo"
-        (ionChange)="aplicarFiltros()">
+      <ion-select
+        class="filter-select"
+        interface="popover"
+        placeholder="Selecciona"
+        [(ngModel)]="filtroPeriodo"
+        (ionChange)="aplicarFiltros()"
+      >
         <ion-select-option value="todos">Todos</ion-select-option>
         <ion-select-option value="semana">Esta semana</ion-select-option>
         <ion-select-option value="mes">Este mes</ion-select-option>
@@ -76,8 +97,13 @@
     <div class="search-block">
       <div class="search-input-wrapper">
         <img src="assets/icon/search-icon.svg" alt="Buscar" class="search-icon" />
-        <input type="text" [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()" placeholder="Buscar en la lista..."
-          class="custom-input" />
+        <input
+          type="text"
+          [(ngModel)]="textoBusqueda"
+          (input)="aplicarFiltros()"
+          placeholder="Buscar en la lista..."
+          class="custom-input"
+        />
       </div>
     </div>
 
@@ -102,16 +128,24 @@
         </div>
 
         <div class="options-container" (click)="borrarPelicula(peli.id)">
-          <img src="assets/icon/trash-icon.svg" alt="Eliminar" class="delete-icon-img" />
+          <img
+            src="assets/icon/trash-icon.svg"
+            alt="Eliminar"
+            class="delete-icon-img"
+          />
         </div>
+      </div>
     </div>
-  </div>
 
-  <div class="add-movie-container">
-    <ion-button expand="block" class="create-btn" fill="solid" (click)="abrirBuscadorPeliculas()">
-      + Añadir película/serie
-    </ion-button>
-  </div>
-
+    <div class="add-movie-container">
+      <ion-button
+        expand="block"
+        class="create-btn"
+        fill="solid"
+        (click)="abrirBuscadorPeliculas()"
+      >
+        + Añadir película/serie
+      </ion-button>
+    </div>
   </div>
 </ion-content>

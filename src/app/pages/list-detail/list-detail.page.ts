@@ -29,6 +29,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { SearchMoviesPage } from '../search-movies/search-movies.page';
 import { MediaDetailPage } from '../media-detail/media-detail.page';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-detail',
@@ -67,18 +69,24 @@ export class ListDetailPage implements OnInit {
 
   peliculas: any[] = [];
   peliculasFiltradas: any[] = [];
+  profileImageUrl: string | null = null;
+  private avatarSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private listItemService: ListItemService,
     private listsService: ListsService,
     private router: Router,
+    private authService: AuthService,
     private modalController: ModalController,
     private alertController: AlertController,
     private toastController: ToastController,
   ) {}
 
   ngOnInit() {
+    this.avatarSub = this.authService.avatar$.subscribe((avatar) => {
+      this.profileImageUrl = avatar;
+    });
     this.listId = this.route.snapshot.paramMap.get('id') || '';
 
     if (this.listId) {
@@ -221,6 +229,10 @@ export class ListDetailPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/tabs/lists']);
+  }
+
+  goToSettings() {
+    this.router.navigateByUrl('/tabs/settings');
   }
 
   async presentEditListAlertDetalle() {
