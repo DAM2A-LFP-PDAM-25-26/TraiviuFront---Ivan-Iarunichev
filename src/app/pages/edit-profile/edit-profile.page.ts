@@ -1,6 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonAvatar,
+  AlertController,
+} from '@ionic/angular/standalone';
 import {
   FormBuilder,
   FormGroup,
@@ -9,13 +22,29 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, AuthResponse } from '../../core/auth/auth.service';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.page.html',
   styleUrls: ['./edit-profile.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonAvatar,
+  ],
 })
 export class EditProfilePage implements OnInit {
   profileForm!: FormGroup;
@@ -27,7 +56,9 @@ export class EditProfilePage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
-  ) {}
+  ) {
+    addIcons({ personCircleOutline });
+  }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
@@ -62,9 +93,7 @@ export class EditProfilePage implements OnInit {
     reader.readAsDataURL(file);
 
     this.authService.uploadAvatar(file).subscribe({
-      next: () => {
-        // authService ya hace setAvatar y actualiza el user internamente
-      },
+      next: () => {},
       error: (err) => {
         console.error('Error subiendo avatar', err);
       },

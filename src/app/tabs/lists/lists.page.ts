@@ -1,21 +1,59 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonicModule,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonAvatar,
+  IonSpinner,
+  IonRefresher,
+  IonRefresherContent,
+  IonPopover,
   AlertController,
   ActionSheetController,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { ListsService, TraiviuList } from '../../core/api/lists';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { addIcons } from 'ionicons';
+import {
+  pencilOutline,
+  trashOutline,
+  closeOutline,
+  personCircleOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-lists',
   templateUrl: 'lists.page.html',
   styleUrls: ['lists.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonAvatar,
+    IonSpinner,
+    IonRefresher,
+    IonRefresherContent,
+    IonPopover,
+  ],
 })
 export class ListsPage implements OnInit, OnDestroy {
   public lists: TraiviuList[] = [];
@@ -31,7 +69,14 @@ export class ListsPage implements OnInit, OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private authService: AuthService
-  ) {}
+  ) {
+    addIcons({
+      pencilOutline,
+      trashOutline,
+      closeOutline,
+      personCircleOutline,
+    });
+  }
 
   ngOnInit() {
     this.avatarSub = this.authService.avatar$.subscribe((avatar) => {

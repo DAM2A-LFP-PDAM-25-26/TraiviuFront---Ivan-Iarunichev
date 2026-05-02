@@ -1,12 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ListItemService } from '../../services/list-item';
 import { ListsService, TraiviuList } from '../../core/api/lists';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonList,
+  IonItem,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  IonSpinner,
+  IonThumbnail,
+  IonPopover,
+  IonSelect,
+  IonSelectOption,
+  AlertController,
+  ToastController,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
 import { SearchMoviesPage } from '../search-movies/search-movies.page';
 import { MediaDetailPage } from '../media-detail/media-detail.page';
 
@@ -15,13 +35,35 @@ import { MediaDetailPage } from '../media-detail/media-detail.page';
   templateUrl: './list-detail.page.html',
   styleUrls: ['./list-detail.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonList,
+    IonItem,
+    IonSearchbar,
+    IonSegment,
+    IonSegmentButton,
+    IonSpinner,
+    IonThumbnail,
+    IonPopover,
+    IonSelect,
+    IonSelectOption,
+  ],
 })
 export class ListDetailPage implements OnInit {
-  listId: string = '';
-  filtroPeriodo: string = 'todos';
-  textoBusqueda: string = '';
-  nombreLista: string = 'Cargando...';
+  listId = '';
+  filtroPeriodo = 'todos';
+  textoBusqueda = '';
+  nombreLista = 'Cargando...';
 
   peliculas: any[] = [];
   peliculasFiltradas: any[] = [];
@@ -68,7 +110,6 @@ export class ListDetailPage implements OnInit {
       next: (data: any) => {
         this.peliculas = Array.isArray(data) ? data : [];
         this.aplicarFiltros();
-        console.log('Películas cargadas de la BD:', this.peliculas);
       },
       error: (err) => {
         console.error('Error al cargar la lista', err);
@@ -79,39 +120,25 @@ export class ListDetailPage implements OnInit {
   }
 
   aplicarFiltros() {
-    console.log('filtroPeriodo actual:', this.filtroPeriodo);
-    console.log('textoBusqueda actual:', this.textoBusqueda);
-    console.log('peliculas antes de filtrar:', this.peliculas);
-
     let resultado = [...this.peliculas];
 
     if (this.textoBusqueda.trim()) {
       const texto = this.textoBusqueda.toLowerCase().trim();
-
       resultado = resultado.filter((peli) =>
         peli.title?.toLowerCase().includes(texto),
       );
     }
 
     resultado = resultado.filter((peli) => this.cumpleFiltroPeriodo(peli));
-
-    console.log('peliculas después de filtrar:', resultado);
-
     this.peliculasFiltradas = resultado;
   }
 
   cumpleFiltroPeriodo(peli: any): boolean {
-    if (this.filtroPeriodo === 'todos') {
-      return true;
-    }
-
-    if (!peli.addedAt) {
-      return false;
-    }
+    if (this.filtroPeriodo === 'todos') return true;
+    if (!peli.addedAt) return false;
 
     const fechaPelicula = new Date(peli.addedAt);
     const ahora = new Date();
-
     const inicioHoy = new Date(
       ahora.getFullYear(),
       ahora.getMonth(),
@@ -126,12 +153,10 @@ export class ListDetailPage implements OnInit {
         inicioSemana.setDate(inicioSemana.getDate() - diff);
         return fechaPelicula >= inicioSemana;
       }
-
       case 'mes': {
         const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
         return fechaPelicula >= inicioMes;
       }
-
       case 'mesAnterior': {
         const inicioMesAnterior = new Date(
           ahora.getFullYear(),
@@ -147,12 +172,10 @@ export class ListDetailPage implements OnInit {
           fechaPelicula >= inicioMesAnterior && fechaPelicula < inicioMesActual
         );
       }
-
       case 'anio': {
         const inicioAnio = new Date(ahora.getFullYear(), 0, 1);
         return fechaPelicula >= inicioAnio;
       }
-
       case 'anioAnterior': {
         const inicioAnioAnterior = new Date(ahora.getFullYear() - 1, 0, 1);
         const inicioAnioActual = new Date(ahora.getFullYear(), 0, 1);
@@ -161,7 +184,6 @@ export class ListDetailPage implements OnInit {
           fechaPelicula < inicioAnioActual
         );
       }
-
       default:
         return true;
     }
@@ -230,22 +252,20 @@ export class ListDetailPage implements OnInit {
               return false;
             }
 
-            this.listsService
-              .updateListName(this.listId, nuevoNombre)
-              .subscribe({
-                next: async () => {
-                  this.nombreLista = nuevoNombre;
-                  const toast = await this.toastController.create({
-                    message: 'Lista renombrada',
-                    duration: 1500,
-                    position: 'bottom',
-                  });
-                  toast.present();
-                },
-                error: (err) => {
-                  console.error('Error al renombrar la lista', err);
-                },
-              });
+            this.listsService.updateListName(this.listId, nuevoNombre).subscribe({
+              next: async () => {
+                this.nombreLista = nuevoNombre;
+                const toast = await this.toastController.create({
+                  message: 'Lista renombrada',
+                  duration: 1500,
+                  position: 'bottom',
+                });
+                toast.present();
+              },
+              error: (err) => {
+                console.error('Error al renombrar la lista', err);
+              },
+            });
 
             return true;
           },

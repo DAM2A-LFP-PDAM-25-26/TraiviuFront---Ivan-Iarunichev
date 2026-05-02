@@ -1,6 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonSpinner,
+  ModalController,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { ClansService } from '../../services/clan';
 import { Clan } from '../../models/clan.model';
 
@@ -9,7 +23,20 @@ import { Clan } from '../../models/clan.model';
   templateUrl: './select-clan.page.html',
   styleUrls: ['./select-clan.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonSpinner,
+  ],
 })
 export class SelectClanPage implements OnInit {
   @Input() mediaData: any;
@@ -20,7 +47,7 @@ export class SelectClanPage implements OnInit {
   constructor(
     private modalController: ModalController,
     private clansService: ClansService,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {}
 
   ngOnInit() {

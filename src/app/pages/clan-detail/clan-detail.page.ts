@@ -1,12 +1,29 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonAvatar,
+  IonTextarea,
+  IonSegment,
+  IonSegmentButton,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonPopover,
   AlertController,
-  IonicModule,
   ToastController,
   LoadingController,
   ModalController,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -14,13 +31,36 @@ import { Clan, ClanActivityItem, ClanMessage } from '../../models/clan.model';
 import { ClansService } from '../../services/clan';
 import { AuthService } from '../../core/auth/auth.service';
 import { MediaDetailPage } from '../media-detail/media-detail.page';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-clan-detail',
   templateUrl: './clan-detail.page.html',
   styleUrls: ['./clan-detail.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonAvatar,
+    IonTextarea,
+    IonSegment,
+    IonSegmentButton,
+    IonRefresher,
+    IonRefresherContent,
+    IonSpinner,
+    IonPopover,
+  ],
 })
 export class ClanDetailPage implements OnInit, OnDestroy {
   clanId!: string;
@@ -57,7 +97,9 @@ export class ClanDetailPage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private authService: AuthService,
     private modalController: ModalController,
-  ) {}
+  ) {
+    addIcons({ personCircleOutline });
+  }
 
   ngOnInit() {
     this.avatarSub = this.authService.avatar$.subscribe((avatar) => {

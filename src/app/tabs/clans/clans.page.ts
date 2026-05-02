@@ -1,24 +1,62 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonSearchbar,
+  IonAvatar,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonPopover,
   AlertController,
-  IonicModule,
   LoadingController,
   ToastController,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ClansService } from '../../services/clan';
 import { Clan } from '../../models/clan.model';
 import { AuthService } from '../../core/auth/auth.service';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-clans',
   templateUrl: './clans.page.html',
   styleUrls: ['./clans.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonSearchbar,
+    IonAvatar,
+    IonRefresher,
+    IonRefresherContent,
+    IonSpinner,
+    IonPopover,
+  ],
 })
 export class ClansPage implements OnInit, OnDestroy {
   myClans: Clan[] = [];
@@ -37,7 +75,9 @@ export class ClansPage implements OnInit, OnDestroy {
     private loadingController: LoadingController,
     private router: Router,
     private authService: AuthService,
-  ) {}
+  ) {
+    addIcons({ personCircleOutline });
+  }
 
   ngOnInit() {
     this.avatarSub = this.authService.avatar$.subscribe((avatar) => {
@@ -84,7 +124,9 @@ export class ClansPage implements OnInit, OnDestroy {
       const code = clan.inviteCode?.toLowerCase() || '';
 
       return (
-        name.includes(term) || description.includes(term) || code.includes(term)
+        name.includes(term) ||
+        description.includes(term) ||
+        code.includes(term)
       );
     });
   }

@@ -2,10 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  IonContent,
+  IonButton,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonIcon,
   AlertController,
-  IonicModule,
   Platform,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 
@@ -14,7 +19,16 @@ import { AuthService } from '../../core/auth/auth.service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    IonContent,
+    IonButton,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonIcon,
+  ],
 })
 export class LoginPage implements OnInit {
   mode: 'login' | 'register' = 'login';
@@ -32,7 +46,7 @@ export class LoginPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alertController: AlertController,
-    private platform: Platform
+    private platform: Platform,
   ) {}
 
   ngOnInit() {
@@ -64,15 +78,11 @@ export class LoginPage implements OnInit {
   }
 
   async submit() {
-    console.log('[LOGIN] submit entra');
-
     if (this.isSubmitting) {
-      console.log('[LOGIN] bloqueado por isSubmitting');
       return;
     }
 
     if (this.authForm.invalid) {
-      console.log('[LOGIN] formulario inválido', this.authForm.value);
       this.authForm.markAllAsTouched();
       return;
     }
@@ -83,17 +93,13 @@ export class LoginPage implements OnInit {
     const password = this.authForm.value.password ?? '';
     const displayName = this.authForm.value.displayName ?? '';
 
-    console.log('[LOGIN] antes request', { mode: this.mode, email });
-
     const request$ =
       this.mode === 'login'
         ? this.authService.login(email, password)
         : this.authService.register(email, password, displayName);
 
     request$.subscribe({
-      next: async (response) => {
-        console.log('[LOGIN] next', response);
-
+      next: async () => {
         this.isSubmitting = false;
 
         const returnUrl =
@@ -102,8 +108,6 @@ export class LoginPage implements OnInit {
         await this.router.navigateByUrl(returnUrl, { replaceUrl: true });
       },
       error: async (err) => {
-        console.log('[LOGIN] error', err);
-
         this.isSubmitting = false;
 
         const runningOnAndroid = this.platform.is('android');
@@ -119,7 +123,7 @@ export class LoginPage implements OnInit {
               displayName: displayName || 'Debug Android',
               role: 'USER',
               avatarUrl: null,
-            })
+            }),
           );
 
           await this.router.navigateByUrl('/tabs/catalog', { replaceUrl: true });

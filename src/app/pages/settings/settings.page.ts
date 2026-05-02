@@ -1,16 +1,46 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonToggle,
+  IonAvatar,
+  AlertController,
+} from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonToggle,
+    IonAvatar,
+  ],
 })
 export class SettingsPage implements OnInit, OnDestroy {
   displayName: string | null = null;
@@ -29,7 +59,9 @@ export class SettingsPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
-  ) {}
+  ) {
+    addIcons({ personCircleOutline });
+  }
 
   ngOnInit() {
     this.userSub = this.authService.user$.subscribe((user) => {

@@ -1,7 +1,22 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonSearchbar,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonThumbnail,
+  IonSpinner,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { TmdbService } from '../../services/tmdb';
 import { ListItemService } from '../../services/list-item';
 
@@ -10,7 +25,23 @@ import { ListItemService } from '../../services/list-item';
   templateUrl: './search-movies.page.html',
   styleUrls: ['./search-movies.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonSearchbar,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonThumbnail,
+    IonSpinner,
+  ],
 })
 export class SearchMoviesPage implements OnInit {
   @Input() listId: string = '';
@@ -18,12 +49,12 @@ export class SearchMoviesPage implements OnInit {
 
   searchText: string = '';
   movies: any[] = [];
-  loading: boolean = false;
+  loading = false;
 
   constructor(
     private tmdbService: TmdbService,
     private listItemService: ListItemService,
-    private modalController: ModalController
+    private modalController: ModalController,
   ) {}
 
   ngOnInit() {
@@ -38,7 +69,7 @@ export class SearchMoviesPage implements OnInit {
     this.tmdbService.getPopularMovies().subscribe({
       next: (resp) => {
         this.movies = (resp.results || []).filter(
-          (item: any) => item.media_type === 'movie' || !item.media_type
+          (item: any) => item.media_type === 'movie' || !item.media_type,
         );
         this.loading = false;
       },
@@ -62,7 +93,7 @@ export class SearchMoviesPage implements OnInit {
     this.tmdbService.searchMulti(texto).subscribe({
       next: (resp) => {
         this.movies = (resp.results || []).filter(
-          (item: any) => item.media_type === 'movie' || item.media_type === 'tv'
+          (item: any) => item.media_type === 'movie' || item.media_type === 'tv',
         );
         this.loading = false;
       },
@@ -82,7 +113,7 @@ export class SearchMoviesPage implements OnInit {
       listId: this.listId,
       externalApiId: movie.id.toString(),
       title: titulo,
-      year: year,
+      year,
       posterUrl: this.tmdbService.getPosterUrl(movie.poster_path),
     };
 

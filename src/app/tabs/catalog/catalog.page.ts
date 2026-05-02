@@ -1,20 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonLabel,
+} from '@ionic/angular/standalone';
 import { TmdbService } from '../../services/tmdb';
 import { MediaDetailPage } from '../../pages/media-detail/media-detail.page';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { ModalController } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.page.html',
   styleUrls: ['./catalog.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon
+],
 })
-export class CatalogPage implements OnInit {
+export class CatalogPage implements OnInit, OnDestroy {
   trendingItems: any[] = [];
   releaseItems: any[] = [];
   mustWatchItems: any[] = [];
@@ -32,7 +53,9 @@ export class CatalogPage implements OnInit {
     private modalController: ModalController,
     private router: Router,
     private authService: AuthService,
-  ) {}
+  ) {
+    addIcons({ personCircleOutline });
+  }
 
   ngOnInit() {
     this.avatarSub = this.authService.avatar$.subscribe((avatar) => {
@@ -42,6 +65,10 @@ export class CatalogPage implements OnInit {
     this.loadTrending();
     this.loadReleases();
     this.loadMustWatch();
+  }
+
+  ngOnDestroy() {
+    this.avatarSub?.unsubscribe();
   }
 
   loadTrending() {
@@ -122,10 +149,6 @@ export class CatalogPage implements OnInit {
     });
   }
 
-  ngOnDestroy() {
-    this.avatarSub?.unsubscribe();
-  }
-
   goToSettings() {
     this.router.navigateByUrl('/tabs/settings');
   }
@@ -145,7 +168,6 @@ export class CatalogPage implements OnInit {
       componentProps: {
         tmdbId: item.id,
         mediaType: item.mediaType || 'movie',
-        // aquí NO hay clanId
       },
       cssClass: 'media-detail-modal',
       presentingElement: await this.modalController.getTop(),

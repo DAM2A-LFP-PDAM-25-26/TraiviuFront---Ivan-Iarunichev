@@ -1,6 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonSpinner,
+  ModalController,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { ListsService, TraiviuList } from '../../core/api/lists';
 import { ListItemService } from '../../services/list-item';
 
@@ -9,7 +23,20 @@ import { ListItemService } from '../../services/list-item';
   templateUrl: './select-list.page.html',
   styleUrls: ['./select-list.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonSpinner,
+  ],
 })
 export class SelectListPage implements OnInit {
   @Input() mediaData: any;
@@ -21,7 +48,7 @@ export class SelectListPage implements OnInit {
     private modalController: ModalController,
     private listsService: ListsService,
     private listItemService: ListItemService,
-    private toastController: ToastController
+    private toastController: ToastController,
   ) {}
 
   ngOnInit() {
