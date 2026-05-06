@@ -21,6 +21,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
 import { AuthService, AuthResponse } from '../../core/auth/auth.service';
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
@@ -50,6 +51,8 @@ export class EditProfilePage implements OnInit {
   profileForm!: FormGroup;
   previewImageUrl: string | null = null;
   currentUser: AuthResponse | null = null;
+  selectedAvatarFile: File | null = null;
+  removeAvatarPending = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,36 +82,31 @@ export class EditProfilePage implements OnInit {
 
   onAvatarSelected(event: Event) {
     const input = event.target as HTMLInputElement;
+
     if (!input.files || input.files.length === 0) {
       return;
     }
 
     const file = input.files[0];
 
+    if (!file.type.startsWith('image/')) {
+      return;
+    }
+
+    this.selectedAvatarFile = file;
+    this.removeAvatarPending = false;
+
     const reader = new FileReader();
     reader.onload = () => {
-      const result = reader.result as string;
-      this.previewImageUrl = result;
+      this.previewImageUrl = reader.result as string;
     };
     reader.readAsDataURL(file);
-
-    this.authService.uploadAvatar(file).subscribe({
-      next: () => {},
-      error: (err) => {
-        console.error('Error subiendo avatar', err);
-      },
-    });
   }
 
   clearAvatar() {
     this.previewImageUrl = null;
-
-    this.authService.removeAvatarBackend().subscribe({
-      next: () => {},
-      error: (err) => {
-        console.error('Error eliminando avatar', err);
-      },
-    });
+    this.selectedAvatarFile = null;
+    this.removeAvatarPending = true;
   }
 
   async save() {
@@ -120,8 +118,21 @@ export class EditProfilePage implements OnInit {
     const displayName = this.profileForm.value.displayName;
     const email = this.profileForm.value.email;
 
-    this.authService.updateMe(displayName, email).subscribe({
+    const requests = [];
+
+    requests.push(this.authService.updateMe(displayName, email));
+
+    if (this.removeAvatarPending) {
+      requests.push(this.authService.removeAvatarBackend());
+    } else if (this.selectedAvatarFile) {
+      requests.push(this.authService.uploadAvatar(this.selectedAvatarFile));
+    }
+
+    forkJoin(requests.length ? requests : [of(null)]).subscribe({
       next: async () => {
+        this.selectedAvatarFile = null;
+        this.removeAvatarPending = false;
+
         const alert = await this.alertController.create({
           header: 'Perfil actualizado',
           message: 'Tus datos se han guardado correctamente.',

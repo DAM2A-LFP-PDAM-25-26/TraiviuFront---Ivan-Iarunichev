@@ -58,13 +58,3 @@ export interface ClanActivityItem {
   listName: string | null;
   createdAt: string;
 }
-
-export interface ClanMessage {
-  id: string;
-  clanId: string;
-  userId: string;
-  displayName: string;
-  avatarUrl?: string | null;
-  content: string;
-  createdAt: string;
-}

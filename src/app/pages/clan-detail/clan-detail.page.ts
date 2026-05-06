@@ -19,6 +19,7 @@ import {
   IonRefresherContent,
   IonSpinner,
   IonPopover,
+  IonInput,
   AlertController,
   ToastController,
   LoadingController,
@@ -60,6 +61,7 @@ import { personCircleOutline } from 'ionicons/icons';
     IonRefresherContent,
     IonSpinner,
     IonPopover,
+    IonInput,
   ],
 })
 export class ClanDetailPage implements OnInit, OnDestroy {
@@ -373,6 +375,13 @@ export class ClanDetailPage implements OnInit, OnDestroy {
         clanId: this.clanId,
       },
       cssClass: 'media-detail-modal',
+    });
+
+    modal.onDidDismiss().then((result) => {
+      const data = result.data;
+      if (data?.action === 'recommended') {
+        this.loadFeed();
+      }
     });
 
     await modal.present();

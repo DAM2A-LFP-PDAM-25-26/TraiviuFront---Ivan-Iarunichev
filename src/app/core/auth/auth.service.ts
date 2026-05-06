@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, timeout, catchError } from 'rxjs/operators';
 
@@ -34,10 +38,14 @@ export class AuthService {
 
   private readonly requestTimeoutMs = 10000;
 
-  private userSubject = new BehaviorSubject<AuthResponse | null>(this.getStoredUser());
+  private userSubject = new BehaviorSubject<AuthResponse | null>(
+    this.getStoredUser()
+  );
   user$ = this.userSubject.asObservable();
 
-  private avatarSubject = new BehaviorSubject<string | null>(this.getInitialAvatar());
+  private avatarSubject = new BehaviorSubject<string | null>(
+    this.getInitialAvatar()
+  );
   avatar$ = this.avatarSubject.asObservable();
 
   private clanNotificationsSubject = new BehaviorSubject<boolean>(
@@ -128,12 +136,13 @@ export class AuthService {
         timeout(this.requestTimeoutMs),
         tap((response: AuthResponse) => {
           const currentToken = this.getToken();
+          const currentUser = this.getCurrentUser();
 
           const mergedResponse: AuthResponse = {
+            ...currentUser,
             ...response,
             token: response.token || currentToken || '',
-            avatarUrl:
-              response.avatarUrl ?? this.getCurrentUser()?.avatarUrl ?? null,
+            avatarUrl: response.avatarUrl ?? currentUser?.avatarUrl ?? null,
           };
 
           this.setSession(mergedResponse);
@@ -211,9 +220,8 @@ export class AuthService {
     this.setToken(auth.token);
     this.setUser(auth);
 
-    const avatarFromBackend = this.resolveAvatarUrl(auth.avatarUrl);
-    const storedAvatar = this.getStoredAvatarByUserId(auth.userId);
-    const finalAvatar = avatarFromBackend || storedAvatar || this.defaultAvatar;
+    const finalAvatar =
+      this.resolveAvatarUrl(auth.avatarUrl) || this.defaultAvatar;
 
     this.avatarSubject.next(finalAvatar);
     localStorage.setItem(this.getAvatarKey(auth.userId), finalAvatar);
@@ -225,12 +233,7 @@ export class AuthService {
       return this.defaultAvatar;
     }
 
-    const backendAvatar = this.resolveAvatarUrl(user.avatarUrl);
-    return (
-      backendAvatar ||
-      this.getStoredAvatarByUserId(user.userId) ||
-      this.defaultAvatar
-    );
+    return this.resolveAvatarUrl(user.avatarUrl) || this.defaultAvatar;
   }
 
   private getAvatarKey(userId: string): string {
@@ -303,7 +306,9 @@ export class AuthService {
       return this.defaultAvatar;
     }
 
-    return this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar;
+    return (
+      this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar
+    );
   }
 
   private getStoredAvatarByUserId(userId: string): string | null {
@@ -314,7 +319,10 @@ export class AuthService {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return;
 
-    localStorage.setItem(this.getAvatarKey(currentUser.userId), this.defaultAvatar);
+    localStorage.setItem(
+      this.getAvatarKey(currentUser.userId),
+      this.defaultAvatar
+    );
     this.avatarSubject.next(this.defaultAvatar);
   }
 
