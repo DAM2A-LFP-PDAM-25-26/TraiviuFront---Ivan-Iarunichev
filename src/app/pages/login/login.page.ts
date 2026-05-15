@@ -46,14 +46,18 @@ export class LoginPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private alertController: AlertController,
-    private platform: Platform,
+    private platform: Platform
   ) {}
 
   ngOnInit() {
     this.setMode('login');
 
     if (this.authService.isLoggedIn()) {
-      this.router.navigateByUrl('/tabs/catalog', { replaceUrl: true });
+      const target = this.authService.isAdmin()
+        ? AuthService.ADMIN_ROUTE
+        : AuthService.HOME_ROUTE;
+
+      this.router.navigateByUrl(target, { replaceUrl: true });
     }
   }
 
@@ -102,36 +106,23 @@ export class LoginPage implements OnInit {
       next: async () => {
         this.isSubmitting = false;
 
-        const returnUrl =
-          this.route.snapshot.queryParamMap.get('returnUrl') || '/tabs/catalog';
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        const currentUser = this.authService.getCurrentUser();
+        const defaultUrl =
+          currentUser?.role === 'ADMIN'
+            ? AuthService.ADMIN_ROUTE
+            : AuthService.HOME_ROUTE;
 
-        await this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+        await this.router.navigateByUrl(returnUrl || defaultUrl, {
+          replaceUrl: true,
+        });
       },
       error: async (err) => {
         this.isSubmitting = false;
 
-        const runningOnAndroid = this.platform.is('android');
-
-        if (runningOnAndroid) {
-          localStorage.setItem('auth_token', 'debug-token-android');
-          localStorage.setItem(
-            'auth_user',
-            JSON.stringify({
-              token: 'debug-token-android',
-              userId: 'debug-user',
-              email: email || 'debug@android.local',
-              displayName: displayName || 'Debug Android',
-              role: 'USER',
-              avatarUrl: null,
-            }),
-          );
-
-          await this.router.navigateByUrl('/tabs/catalog', { replaceUrl: true });
-          return;
-        }
-
         const alert = await this.alertController.create({
-          header: this.mode === 'login' ? 'Error de acceso' : 'Error de registro',
+          header:
+            this.mode === 'login' ? 'Error de acceso' : 'Error de registro',
           message:
             err?.error?.message ||
             err?.error?.error ||

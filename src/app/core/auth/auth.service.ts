@@ -6,6 +6,8 @@ import {
 } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, timeout, catchError } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
+import { Router } from '@angular/router';
 
 export interface LoginRequest {
   email: string;
@@ -25,7 +27,7 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly backendBaseUrl = 'http://192.168.1.34:8085';
+  private readonly backendBaseUrl = 'http://192.168.9.33:8085';
   private readonly apiBaseUrl = `${this.backendBaseUrl}/api`;
   private readonly authApiUrl = `${this.apiBaseUrl}/auth`;
   private readonly userApiUrl = `${this.apiBaseUrl}/users`;
@@ -37,6 +39,9 @@ export class AuthService {
   private readonly defaultAvatar = 'assets/icon/default-avatar.png';
 
   private readonly requestTimeoutMs = 10000;
+  static readonly LOGIN_ROUTE = '/auth/login';
+  static readonly ADMIN_ROUTE = '/admin/dashboard';
+  static readonly HOME_ROUTE = '/tabs/catalog';
 
   private userSubject = new BehaviorSubject<AuthResponse | null>(
     this.getStoredUser()
@@ -53,7 +58,38 @@ export class AuthService {
   );
   clanNotificationsEnabled$ = this.clanNotificationsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {
+    this.checkTokenExpiry();
+  }
+
+  checkTokenExpiry(): void {
+    const token = this.getToken();
+    if (!token) return;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const now = Date.now() / 1000;
+      if (decoded.exp < now) {
+        this.logout();
+        this.router.navigateByUrl(AuthService.LOGIN_ROUTE);
+      }
+    } catch {
+      this.logout();
+      this.router.navigateByUrl(AuthService.LOGIN_ROUTE);
+    }
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.exp < Date.now() / 1000;
+    } catch {
+      return true;
+    }
+  }
 
   login(email: string, password: string): Observable<AuthResponse> {
     const body: LoginRequest = { email, password };
@@ -120,6 +156,29 @@ export class AuthService {
       );
   }
 
+  removeAvatarBackend(): Observable<{ avatarUrl: string | null }> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken() ?? ''}`,
+    });
+
+    return this.http
+      .delete<{ avatarUrl: string | null }>(`${this.userApiUrl}/me/avatar`, {
+        headers,
+      })
+      .pipe(
+        timeout(this.requestTimeoutMs),
+        tap(() => {
+          this.setAvatar(null);
+          const current = this.getCurrentUser();
+          if (current) {
+            const updated: AuthResponse = { ...current, avatarUrl: undefined };
+            this.setUser(updated);
+          }
+        }),
+        catchError((error) => this.handleHttpError(error))
+      );
+  }
+
   updateMe(displayName: string, email: string): Observable<AuthResponse> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.getToken() ?? ''}`,
@@ -151,71 +210,6 @@ export class AuthService {
       );
   }
 
-  removeAvatarBackend(): Observable<{ avatarUrl: string | null }> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.getToken() ?? ''}`,
-    });
-
-    return this.http
-      .delete<{ avatarUrl: string | null }>(`${this.userApiUrl}/me/avatar`, {
-        headers,
-      })
-      .pipe(
-        timeout(this.requestTimeoutMs),
-        tap(() => {
-          this.setAvatar(null);
-          const current = this.getCurrentUser();
-          if (current) {
-            const updated: AuthResponse = { ...current, avatarUrl: undefined };
-            this.setUser(updated);
-          }
-        }),
-        catchError((error) => this.handleHttpError(error))
-      );
-  }
-
-  private handleHttpError(error: unknown) {
-    if ((error as any)?.name === 'TimeoutError') {
-      return throwError(() => ({
-        error: {
-          message:
-            'La conexión con el servidor tardó demasiado. En Android revisa IP, WiFi y configuración HTTP.',
-        },
-      }));
-    }
-
-    const httpError = error as HttpErrorResponse;
-
-    if (httpError.status === 0) {
-      return throwError(() => ({
-        error: {
-          message:
-            'No se pudo conectar con el servidor. En Android comprueba que el móvil y el PC estén en la misma red y que el backend esté accesible.',
-        },
-      }));
-    }
-
-    return throwError(() => error);
-  }
-
-  private resolveAvatarUrl(url: string | null | undefined): string | null {
-    if (!url || !url.trim()) {
-      return null;
-    }
-
-    const trimmed = url.trim();
-
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-      return trimmed;
-    }
-
-    if (trimmed.startsWith('/')) {
-      return `${this.backendBaseUrl}${trimmed}`;
-    }
-
-    return `${this.backendBaseUrl}/${trimmed}`;
-  }
-
   private setSession(auth: AuthResponse): void {
     this.setToken(auth.token);
     this.setUser(auth);
@@ -225,39 +219,6 @@ export class AuthService {
 
     this.avatarSubject.next(finalAvatar);
     localStorage.setItem(this.getAvatarKey(auth.userId), finalAvatar);
-  }
-
-  private getInitialAvatar(): string | null {
-    const user = this.getStoredUser();
-    if (!user) {
-      return this.defaultAvatar;
-    }
-
-    return this.resolveAvatarUrl(user.avatarUrl) || this.defaultAvatar;
-  }
-
-  private getAvatarKey(userId: string): string {
-    return `${this.avatarKeyPrefix}${userId}`;
-  }
-
-  private getInitialClanNotificationsValue(): boolean {
-    const raw = localStorage.getItem(this.clanNotificationsKey);
-
-    if (raw === null) {
-      localStorage.setItem(this.clanNotificationsKey, 'true');
-      return true;
-    }
-
-    return raw === 'true';
-  }
-
-  setClanNotificationsEnabled(enabled: boolean): void {
-    localStorage.setItem(this.clanNotificationsKey, String(enabled));
-    this.clanNotificationsSubject.next(enabled);
-  }
-
-  getClanNotificationsEnabled(): boolean {
-    return this.clanNotificationsSubject.value;
   }
 
   setToken(token: string): void {
@@ -291,6 +252,22 @@ export class AuthService {
     this.userSubject.next(null);
   }
 
+  logout(): void {
+    this.clearToken();
+    this.clearUser();
+    this.avatarSubject.next(this.defaultAvatar);
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    return !this.isTokenExpired();
+  }
+
+  isAdmin(): boolean {
+    return this.getCurrentUser()?.role === 'ADMIN';
+  }
+
   setAvatar(url: string | null): void {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return;
@@ -302,17 +279,10 @@ export class AuthService {
 
   getStoredAvatar(): string | null {
     const currentUser = this.getCurrentUser();
-    if (!currentUser) {
-      return this.defaultAvatar;
-    }
-
+    if (!currentUser) return this.defaultAvatar;
     return (
       this.getStoredAvatarByUserId(currentUser.userId) || this.defaultAvatar
     );
-  }
-
-  private getStoredAvatarByUserId(userId: string): string | null {
-    return localStorage.getItem(this.getAvatarKey(userId));
   }
 
   clearAvatar(): void {
@@ -326,13 +296,80 @@ export class AuthService {
     this.avatarSubject.next(this.defaultAvatar);
   }
 
-  logout(): void {
-    this.clearToken();
-    this.clearUser();
-    this.avatarSubject.next(this.defaultAvatar);
+  private getInitialAvatar(): string | null {
+    const user = this.getStoredUser();
+    if (!user) return this.defaultAvatar;
+
+    return (
+      this.getStoredAvatarByUserId(user.userId) ||
+      this.resolveAvatarUrl(user.avatarUrl) ||
+      this.defaultAvatar
+    );
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
+  private getAvatarKey(userId: string): string {
+    return `${this.avatarKeyPrefix}${userId}`;
+  }
+
+  private getStoredAvatarByUserId(userId: string): string | null {
+    return localStorage.getItem(this.getAvatarKey(userId));
+  }
+
+  private resolveAvatarUrl(url: string | null | undefined): string | null {
+    if (!url || !url.trim()) return null;
+
+    const trimmed = url.trim();
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+
+    if (trimmed.startsWith('/')) {
+      return `${this.backendBaseUrl}${trimmed}`;
+    }
+
+    return `${this.backendBaseUrl}/${trimmed}`;
+  }
+
+  setClanNotificationsEnabled(enabled: boolean): void {
+    localStorage.setItem(this.clanNotificationsKey, String(enabled));
+    this.clanNotificationsSubject.next(enabled);
+  }
+
+  getClanNotificationsEnabled(): boolean {
+    return this.clanNotificationsSubject.value;
+  }
+
+  private getInitialClanNotificationsValue(): boolean {
+    const raw = localStorage.getItem(this.clanNotificationsKey);
+    if (raw === null) {
+      localStorage.setItem(this.clanNotificationsKey, 'true');
+      return true;
+    }
+    return raw === 'true';
+  }
+
+  private handleHttpError(error: unknown) {
+    if ((error as any)?.name === 'TimeoutError') {
+      return throwError(() => ({
+        error: {
+          message:
+            'La conexión con el servidor tardó demasiado. En Android revisa IP, WiFi y configuración HTTP.',
+        },
+      }));
+    }
+
+    const httpError = error as HttpErrorResponse;
+
+    if (httpError.status === 0) {
+      return throwError(() => ({
+        error: {
+          message:
+            'No se pudo conectar con el servidor. En Android comprueba que el móvil y el PC estén en la misma red y que el backend esté accesible.',
+        },
+      }));
+    }
+
+    return throwError(() => error);
   }
 }

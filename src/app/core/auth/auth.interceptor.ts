@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
-const API_BASE = 'http://192.168.1.34:8085/api';
+const API_BASE = 'http://192.168.9.33:8085/api';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('auth_token');

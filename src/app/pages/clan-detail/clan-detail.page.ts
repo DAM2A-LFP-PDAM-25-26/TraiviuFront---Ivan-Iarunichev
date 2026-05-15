@@ -88,7 +88,7 @@ export class ClanDetailPage implements OnInit, OnDestroy {
   private avatarSub?: Subscription;
   private clanNotificationsSub?: Subscription;
   private chatPollIntervalId: any;
-  private readonly backendBaseUrl = 'http://192.168.1.34:8085';
+  private readonly backendBaseUrl = 'http://192.168.9.33:8085';
 
   constructor(
     private route: ActivatedRoute,

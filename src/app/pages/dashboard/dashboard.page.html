@@ -1,0 +1,199 @@
+<ion-content [fullscreen]="true" class="admin-content">
+  <div class="dashboard-wrapper">
+    <div class="dashboard-header">
+      <div>
+        <p class="eyebrow">Administración</p>
+        <h1>Panel de Traiviu</h1>
+        <p class="subtitle">
+          Gestiona usuarios, bloqueo de cuentas y clanes desde una sola pantalla.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <ion-button fill="outline" (click)="goBackToApp()">
+          Volver a la app
+        </ion-button>
+        <ion-button color="danger" (click)="logout()">
+          <ion-icon slot="start" name="log-out-outline"></ion-icon>
+          Cerrar sesión
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Usuarios</span>
+        <strong>{{ totalUsers }}</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Admins</span>
+        <strong>{{ totalAdmins }}</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Bloqueados</span>
+        <strong>{{ totalBlocked }}</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Clanes</span>
+        <strong>{{ totalClans }}</strong>
+      </div>
+    </div>
+
+    <ion-segment [value]="activeTab" (ionChange)="setTab($event)">
+      <ion-segment-button value="users">
+        <ion-label>Usuarios</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="clans">
+        <ion-label>Clanes</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <section *ngIf="activeTab === 'users'" class="panel-section">
+      <div class="section-header">
+        <h2>Gestión de usuarios</h2>
+        <ion-button (click)="presentCreateUserAlert()">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Nuevo usuario
+        </ion-button>
+      </div>
+
+      <div *ngIf="isLoadingUsers" class="loading-box">
+        <ion-spinner></ion-spinner>
+      </div>
+
+      <div *ngIf="!isLoadingUsers && users.length === 0" class="empty-box">
+        No hay usuarios para mostrar.
+      </div>
+
+      <div *ngIf="!isLoadingUsers && users.length > 0" class="cards-list">
+        <article class="entity-card" *ngFor="let user of users">
+          <div class="entity-main">
+            <div>
+              <h3>{{ user.displayName }}</h3>
+              <p>{{ user.email }}</p>
+              <div class="meta-row">
+                <ion-badge color="primary">{{ user.role }}</ion-badge>
+                <ion-badge [color]="user.blocked ? 'danger' : 'success'">
+                  {{ user.blocked ? 'Bloqueado' : 'Activo' }}
+                </ion-badge>
+              </div>
+              <small>Creado: {{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+              <br />
+              <small *ngIf="user.lastLoginAt">
+                Último login: {{ user.lastLoginAt | date:'dd/MM/yyyy HH:mm' }}
+              </small>
+            </div>
+          </div>
+
+          <div class="entity-actions">
+            <ion-button fill="outline" (click)="presentEditUserAlert(user)">
+              <ion-icon slot="start" name="pencil-outline"></ion-icon>
+              Editar
+            </ion-button>
+
+            <ion-button
+              [color]="user.blocked ? 'success' : 'warning'"
+              fill="outline"
+              (click)="toggleBlocked(user)"
+            >
+              <ion-icon
+                slot="start"
+                [name]="user.blocked ? 'lock-open-outline' : 'lock-closed-outline'"
+              ></ion-icon>
+              {{ user.blocked ? 'Desbloquear' : 'Bloquear' }}
+            </ion-button>
+
+            <ion-button color="danger" fill="outline" (click)="presentDeleteUserAlert(user)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Eliminar
+            </ion-button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section *ngIf="activeTab === 'clans'" class="panel-section">
+      <div class="section-header">
+        <h2>Gestión de clanes</h2>
+      </div>
+
+      <div *ngIf="isLoadingClans" class="loading-box">
+        <ion-spinner></ion-spinner>
+      </div>
+
+      <div *ngIf="!isLoadingClans && clans.length === 0" class="empty-box">
+        No hay clanes para mostrar.
+      </div>
+
+      <div *ngIf="!isLoadingClans && clans.length > 0" class="cards-list">
+        <article class="entity-card" *ngFor="let clan of clans">
+          <div class="entity-main">
+            <div>
+              <h3>{{ clan.name }}</h3>
+              <p>Código: {{ clan.inviteCode }}</p>
+              <div class="meta-row">
+                <ion-badge color="tertiary">{{ clan.status }}</ion-badge>
+                <ion-badge color="medium">{{ clan.membersCount }} miembros</ion-badge>
+              </div>
+              <small>Creado: {{ clan.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+          </div>
+
+          <div class="entity-actions">
+            <ion-button fill="outline" (click)="toggleClanMembers(clan)">
+              <ion-icon
+                slot="start"
+                [name]="isClanExpanded(clan.id) ? 'chevron-up-outline' : 'chevron-down-outline'"
+              ></ion-icon>
+              {{ isClanExpanded(clan.id) ? 'Ocultar miembros' : 'Ver miembros' }}
+            </ion-button>
+
+            <ion-button fill="outline" (click)="presentEditClanAlert(clan)">
+              <ion-icon slot="start" name="pencil-outline"></ion-icon>
+              Editar
+            </ion-button>
+
+            <ion-button color="danger" fill="outline" (click)="presentDeleteClanAlert(clan)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Borrar clan
+            </ion-button>
+          </div>
+
+          <div class="members-box" *ngIf="isClanExpanded(clan.id)">
+            <div *ngIf="isLoadingMembers[clan.id]" class="loading-box inner">
+              <ion-spinner></ion-spinner>
+            </div>
+
+            <div
+              *ngIf="!isLoadingMembers[clan.id] && expandedClanMembers[clan.id]?.length === 0"
+              class="empty-box inner"
+            >
+              Este clan no tiene miembros.
+            </div>
+
+            <div
+              *ngIf="!isLoadingMembers[clan.id] && expandedClanMembers[clan.id]?.length"
+              class="member-list"
+            >
+              <div class="member-item" *ngFor="let member of expandedClanMembers[clan.id]">
+                <div>
+                  <strong>{{ member.displayName }}</strong>
+                  <p>{{ member.email }}</p>
+                  <small>{{ member.role }} · {{ member.joinedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                </div>
+
+                <ion-button
+                  color="danger"
+                  fill="clear"
+                  (click)="presentRemoveMemberAlert(clan, member)"
+                >
+                  Expulsar
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</ion-content>

@@ -72,7 +72,8 @@
     </div>
 
     <div class="logout-container">
-      <ion-button expand="block" class="save-btn" fill="solid" [disabled]="profileForm.invalid" (click)="save()">
+      <ion-button expand="block" class="save-btn" fill="solid" [disabled]="profileForm.invalid || isSaving"
+        (click)="save()">
         Guardar cambios
       </ion-button>
     </div>

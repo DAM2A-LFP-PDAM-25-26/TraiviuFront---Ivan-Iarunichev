@@ -21,10 +21,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AuthService, AuthResponse } from '../../core/auth/auth.service';
 import { addIcons } from 'ionicons';
-import { personCircleOutline } from 'ionicons/icons';
+import { personCircleOutline, personOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-edit-profile',
@@ -53,14 +54,15 @@ export class EditProfilePage implements OnInit {
   currentUser: AuthResponse | null = null;
   selectedAvatarFile: File | null = null;
   removeAvatarPending = false;
+  isSaving = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private alertController: AlertController,
+    private alertController: AlertController
   ) {
-    addIcons({ personCircleOutline });
+    addIcons({personOutline,personCircleOutline});
   }
 
   ngOnInit() {
@@ -110,60 +112,69 @@ export class EditProfilePage implements OnInit {
   }
 
   async save() {
-    if (this.profileForm.invalid) {
+    if (this.profileForm.invalid || this.isSaving) {
       this.profileForm.markAllAsTouched();
       return;
     }
 
+    this.isSaving = true;
+
     const displayName = this.profileForm.value.displayName;
     const email = this.profileForm.value.email;
 
-    const requests = [];
+    this.authService
+      .updateMe(displayName, email)
+      .pipe(
+        switchMap(() => {
+          if (this.removeAvatarPending) {
+            return this.authService.removeAvatarBackend();
+          }
 
-    requests.push(this.authService.updateMe(displayName, email));
+          if (this.selectedAvatarFile) {
+            return this.authService.uploadAvatar(this.selectedAvatarFile);
+          }
 
-    if (this.removeAvatarPending) {
-      requests.push(this.authService.removeAvatarBackend());
-    } else if (this.selectedAvatarFile) {
-      requests.push(this.authService.uploadAvatar(this.selectedAvatarFile));
-    }
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: async () => {
+          this.selectedAvatarFile = null;
+          this.removeAvatarPending = false;
+          this.isSaving = false;
 
-    forkJoin(requests.length ? requests : [of(null)]).subscribe({
-      next: async () => {
-        this.selectedAvatarFile = null;
-        this.removeAvatarPending = false;
+          const alert = await this.alertController.create({
+            header: 'Perfil actualizado',
+            message: 'Tus datos se han guardado correctamente.',
+            cssClass: 'custom-success-alert',
+            buttons: [
+              {
+                text: 'OK',
+                cssClass: 'success-alert-btn',
+              },
+            ],
+          });
 
-        const alert = await this.alertController.create({
-          header: 'Perfil actualizado',
-          message: 'Tus datos se han guardado correctamente.',
-          cssClass: 'custom-success-alert',
-          buttons: [
-            {
-              text: 'OK',
-              cssClass: 'success-alert-btn',
-            },
-          ],
-        });
+          await alert.present();
+          this.router.navigateByUrl('/settings');
+        },
+        error: async (err) => {
+          this.isSaving = false;
+          console.error('Error actualizando perfil', err);
 
-        await alert.present();
-        this.router.navigateByUrl('/tabs/settings');
-      },
-      error: async (err) => {
-        console.error('Error actualizando perfil', err);
+          const alert = await this.alertController.create({
+            header: 'Error',
+            message: err?.error?.message || 'No se pudo actualizar el perfil.',
+            buttons: ['OK'],
+          });
 
-        const alert = await this.alertController.create({
-          header: 'Error',
-          message: err?.error?.message || 'No se pudo actualizar el perfil.',
-          buttons: ['OK'],
-        });
-
-        await alert.present();
-      },
-    });
+          await alert.present();
+        },
+      });
   }
 
   goBack() {
-    this.router.navigateByUrl('/tabs/settings');
+    this.router.navigateByUrl('/settings');
   }
 
   goToHome() {

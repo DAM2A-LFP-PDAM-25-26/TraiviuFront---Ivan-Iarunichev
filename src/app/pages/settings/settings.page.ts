@@ -58,7 +58,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private alertController: AlertController,
+    private alertController: AlertController
   ) {
     addIcons({ personCircleOutline });
   }
@@ -107,11 +107,39 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   changeProfileImage() {
-    this.router.navigateByUrl('/tabs/edit-profile');
+    this.router.navigateByUrl('/edit-profile');
   }
 
-  removeProfileImage() {
-    this.authService.clearAvatar();
+  async removeProfileImage() {
+    const alert = await this.alertController.create({
+      header: 'Quitar foto de perfil',
+      message: '¿Seguro que quieres eliminar tu foto de perfil?',
+      cssClass: 'custom-logout-alert',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'logout-cancel-btn',
+        },
+        {
+          text: 'Quitar',
+          role: 'destructive',
+          cssClass: 'logout-confirm-btn',
+          handler: () => {
+            this.authService.removeAvatarBackend().subscribe({
+              next: () => {
+                this.profileImageUrl = this.defaultProfileImage;
+              },
+              error: (err) => {
+                console.error('Error al quitar avatar:', err);
+              },
+            });
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   async logout() {
@@ -141,7 +169,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   goToEditProfile() {
-    this.router.navigateByUrl('/tabs/edit-profile');
+    this.router.navigateByUrl('/edit-profile');
   }
 
   goToHome() {

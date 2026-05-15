@@ -3,7 +3,11 @@
     <ion-title>
       <button class="brand-button" type="button" (click)="goToHome()">
         <div class="brand-container">
-          <img src="assets/icon/traiviu-logo.png" alt="T" class="brand-logo-t" />
+          <img
+            src="assets/icon/traiviu-logo.png"
+            alt="T"
+            class="brand-logo-t"
+          />
           <span class="brand-text">raiviu</span>
         </div>
       </button>
@@ -21,11 +25,15 @@
       <div class="profile-header">
         <button class="avatar-circle" type="button" (click)="changeProfileImage()">
           <ng-container *ngIf="profileImageUrl; else defaultAvatar">
-            <img [src]="profileImageUrl" alt="Avatar de perfil" class="profile-avatar-image" />
+            <img
+              [src]="profileImageUrl"
+              alt="Avatar de perfil"
+              class="profile-avatar-image"
+            />
           </ng-container>
 
           <ng-template #defaultAvatar>
-            <ion-icon name="person-outline"></ion-icon>
+            <ion-icon name="person-circle-outline"></ion-icon>
           </ng-template>
         </button>
 
@@ -35,16 +43,22 @@
         </div>
       </div>
 
-      <ion-button expand="block" class="edit-btn" fill="outline" (click)="goToEditProfile()">
+      <ion-button
+        expand="block"
+        class="edit-btn"
+        fill="outline"
+        (click)="goToEditProfile()"
+      >
         Editar perfil
       </ion-button>
 
       <ion-button
-        *ngIf="profileImageUrl"
+        *ngIf="profileImageUrl && profileImageUrl !== defaultProfileImage"
         expand="block"
         class="remove-avatar-btn"
         fill="clear"
-        (click)="removeProfileImage()">
+        (click)="removeProfileImage()"
+      >
         Quitar foto de perfil
       </ion-button>
     </div>
@@ -65,8 +79,8 @@
             class="settings-toggle"
             slot="end"
             [checked]="clanNotificationsEnabled"
-            (ionChange)="toggleClanNotifications($event)">
-          </ion-toggle>
+            (ionChange)="toggleClanNotifications($event)"
+          ></ion-toggle>
         </ion-item>
 
         <ion-item class="settings-item">
@@ -80,14 +94,19 @@
             class="settings-toggle"
             slot="end"
             [checked]="soundEnabled"
-            (ionChange)="toggleSound($event)">
-          </ion-toggle>
+            (ionChange)="toggleSound($event)"
+          ></ion-toggle>
         </ion-item>
       </ion-list>
     </div>
 
     <div class="logout-container">
-      <ion-button expand="block" class="logout-btn" fill="solid" (click)="logout()">
+      <ion-button
+        expand="block"
+        class="logout-btn"
+        fill="solid"
+        (click)="logout()"
+      >
         Cerrar sesión
       </ion-button>
     </div>

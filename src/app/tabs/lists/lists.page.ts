@@ -28,8 +28,7 @@ import {
   pencilOutline,
   trashOutline,
   closeOutline,
-  personCircleOutline,
-} from 'ionicons/icons';
+  personCircleOutline, folderOpenOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-lists',
@@ -70,12 +69,7 @@ export class ListsPage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private authService: AuthService
   ) {
-    addIcons({
-      pencilOutline,
-      trashOutline,
-      closeOutline,
-      personCircleOutline,
-    });
+    addIcons({personCircleOutline,folderOpenOutline,pencilOutline,trashOutline,closeOutline,});
   }
 
   ngOnInit() {
