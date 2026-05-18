@@ -18,7 +18,7 @@ export interface DeleteListResponse {
   providedIn: 'root',
 })
 export class ListsService {
-  private apiUrl = 'http://192.168.9.33:8085/api';
+  private apiUrl = 'https://ivani26.iesmontenaranco.com:8000/api';
 
   constructor(private http: HttpClient) {}
 

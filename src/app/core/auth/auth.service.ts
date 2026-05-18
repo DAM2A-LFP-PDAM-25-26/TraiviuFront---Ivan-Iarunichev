@@ -27,7 +27,7 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly backendBaseUrl = 'http://192.168.9.33:8085';
+  private readonly backendBaseUrl = 'https://ivani26.iesmontenaranco.com:8000';
   private readonly apiBaseUrl = `${this.backendBaseUrl}/api`;
   private readonly authApiUrl = `${this.apiBaseUrl}/auth`;
   private readonly userApiUrl = `${this.apiBaseUrl}/users`;

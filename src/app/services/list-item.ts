@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ListItemService {
 
-  private apiUrl = 'http://192.168.9.33:8085/api/list-items';
+  private apiUrl = 'https://ivani26.iesmontenaranco.com:8000/api/list-items';
 
   constructor(private http: HttpClient) { }
 

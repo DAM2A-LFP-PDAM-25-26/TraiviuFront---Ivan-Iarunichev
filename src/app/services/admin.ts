@@ -48,7 +48,7 @@ export interface AdminClanUpdateRequest {
   providedIn: 'root',
 })
 export class AdminApiService {
-  private readonly baseUrl = 'http://192.168.9.33:8085/api/admin';
+  private readonly baseUrl = 'https://ivani26.iesmontenaranco.com:8000/api/admin';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

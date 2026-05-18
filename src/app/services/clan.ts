@@ -23,7 +23,7 @@ export interface ClanRecommendationRequest {
   providedIn: 'root',
 })
 export class ClansService {
-  private readonly apiUrl = 'http://192.168.9.33:8085/api/clans';
+  private readonly apiUrl = 'https://ivani26.iesmontenaranco.com:8000/api/clans';
 
   constructor(private http: HttpClient) {}
 
